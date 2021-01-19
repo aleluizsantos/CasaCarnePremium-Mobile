@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ccp-mobile",
-    "slug": "ccp-mobile",
+    "name": "Casa Premium",
+    "slug": "CasaPremium",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,9 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lesoftware.casacarnepremium",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.lesoftware.casacarnepremium",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
