@@ -1,28 +1,21 @@
-
 import React, { useState, useContext } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { BorderlessButton } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 
-import Requests from '../../Contexts/requests';
+import Requests from "../../Contexts/requests";
 import Header from "../../Components/Header";
 import SubHeader from "../../Components/SubHeader";
 import ItemCar from "../../Components/ItemCar";
 import { colors, formatMoney } from "../../Styles";
-import imgCartsEmpty from '../../assets/cartsEmpty.png';
+import imgCartsEmpty from "../../assets/cartsEmpty.png";
 import styles from "./styles";
 //--------------------------------------------------------------------------------
-// PAGE - Carrinho 
+// PAGE - Carrinho
 //--------------------------------------------------------------------------------
 function Car() {
-  const  { itemCar, totalCar } = useContext(Requests);
+  const { itemCar, totalCar } = useContext(Requests);
   const [isDetailsTotal, setIsDetailsTotal] = useState(false);
 
   const navigation = useNavigation();
@@ -35,27 +28,29 @@ function Car() {
   function handleGotoPayments() {
     navigation.navigate("Payments");
   }
-//--------------------------------------------------------------------------------
-// Retorno da função Renderização do Carrinho
-//--------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------
+  // Retorno da função Renderização do Carrinho
+  //--------------------------------------------------------------------------------
   return (
     <View style={styles.container}>
       <Header goBack={true} />
-      <SubHeader title="Meu Carrinho" subTitle="Produtos selecionados" /> 
+      <SubHeader title="Meu Carrinho" subTitle="Produtos selecionados" />
       {/* Itens do pedido */}
       <ScrollView>
-        {itemCar.map(items => (
+        {itemCar.map((items) => (
           <ItemCar key={items.name} itemCar={items} />
         ))}
       </ScrollView>
-        
-        {itemCar.length <= 0 ?
-          <View style={styles.containtImage}>
-            <Image source={imgCartsEmpty} style={styles.imgCartEmpty} />
-            <Text style={styles.textNotItemCart}>Você não tem nenhum item no carrinho!</Text>
-          </View>
-        :
-          <View style={styles.totalContent}>
+
+      {itemCar.length <= 0 ? (
+        <View style={styles.containtImage}>
+          <Image source={imgCartsEmpty} style={styles.imgCartEmpty} />
+          <Text style={styles.textNotItemCart}>
+            Você não tem nenhum item no carrinho!
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.totalContent}>
           <View style={styles.fieldGroup}>
             <Text style={styles.taxaDelivery}>Taxa de entrega</Text>
             <Text style={styles.taxaDelivery}>R$ 0,00</Text>
@@ -66,14 +61,18 @@ function Car() {
             <Text style={styles.total}>{formatMoney(totalCar)}</Text>
           </View>
           <BorderlessButton
+            enabled={!!totalCar ? true : false}
             onPress={handleGotoPayments}
-            style={styles.buttonConfirm}
+            style={[
+              styles.buttonConfirm,
+              !!!totalCar && { opacity: 0.2, backgroundColor: "#d3d3d3" },
+            ]}
             rippleColor={colors.primary}
           >
             <Text style={styles.textButtonConfirm}>Confirmar Pedido</Text>
           </BorderlessButton>
         </View>
-        }
+      )}
     </View>
   );
 }

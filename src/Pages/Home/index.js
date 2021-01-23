@@ -19,6 +19,7 @@ import styles from "./styles";
 
 const Home = () => {
   const { user } = useContext(AuthContext);
+  const [isloagind, setIsloading] = useState(true);
   const {
     addDeliveryType,
     openClose,
@@ -34,6 +35,7 @@ const Home = () => {
     (async () => {
       checkOpenClose();
     })();
+    setIsloading(false);
   }, []);
 
   useEffect(() => {
@@ -58,6 +60,11 @@ const Home = () => {
     addDeliveryType(id);
     navigation.navigate("Category");
   }
+
+  if (isloagind) {
+    return <View />;
+  }
+
   return (
     <View style={styles.container}>
       <ModalShow visible={modalVisible} title="Horário de Atendimento">

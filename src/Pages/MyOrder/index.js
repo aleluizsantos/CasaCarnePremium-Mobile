@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, ScrollView, Text } from "react-native";
+import { View, ScrollView, Text, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import Header from "../../Components/Header";
@@ -14,17 +14,28 @@ const MyOrder = () => {
   const { updateDB } = useContext(requests);
   const [dataRequest, setDataRequest] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [visibleMoreOrder, setVisibleMoreOrder] = useState(true);
 
   useEffect(() => {
     (async () => {
       navigation.addListener("focus", () => setIsLoading(!isLoading));
       await api
-        .get("request", { headers: { statusRequest: "1,2,3,4,5,6" } })
+        .get("request", { headers: { statusRequest: "1,2,3,4,5" } })
         .then((response) => {
           setDataRequest(response.data);
         });
+      setVisibleMoreOrder(true);
     })();
   }, [updateDB, isLoading, navigator]);
+
+  const handleIsLoadMoreOrders = async () => {
+    await api
+      .get("request", { headers: { statusRequest: "6" } })
+      .then((response) => {
+        setDataRequest([...dataRequest, ...response.data]);
+        setVisibleMoreOrder(false);
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -38,6 +49,11 @@ const MyOrder = () => {
           {dataRequest.map((item) => (
             <MyOrdes key={item.id} request={item} />
           ))}
+          {visibleMoreOrder && (
+            <TouchableOpacity onPress={handleIsLoadMoreOrders}>
+              <Text style={styles.textLoadMore}>Carregar todos</Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
       </View>
     </View>
