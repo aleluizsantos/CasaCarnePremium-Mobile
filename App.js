@@ -1,33 +1,64 @@
-import { StatusBar } from "expo-status-bar";
+import "react-native-gesture-handler";
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 import React, { useEffect } from "react";
 import * as Updates from "expo-updates";
-import { StyleSheet, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { View, ActivityIndicator } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
-export default function App() {
+import {
+  Archivo_400Regular,
+  Archivo_700Bold,
+  useFonts,
+} from "@expo-google-fonts/archivo";
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+} from "@expo-google-fonts/poppins";
+
+import { AuthProvider } from "./src/Contexts/auth";
+import { RequestProvider } from "./src/Contexts/requests";
+import Routes from "./src/routes";
+
+const App = () => {
+  let [fontsLoaded] = useFonts({
+    Archivo_400Regular,
+    Archivo_700Bold,
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+  });
+
   useEffect(() => {
     async function updateApp() {
-      const { isAvailable } = await Updates.checkForUpdateAsync();
-      if (isAvailable) {
-        await Updates.fetchUpdateAsync();
-        await Updates.reloadAsync();
-      }
+      try {
+        const { isAvailable } = await Updates.checkForUpdateAsync();
+        if (isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (error) {}
     }
     updateApp();
   }, []);
 
-  return (
-    <View style={styles.container}>
-      <Text>Casa de carne premium!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator color="#484848" size={48} />
+      </View>
+    );
+  } else {
+    return (
+      <NavigationContainer>
+        <AuthProvider>
+          <RequestProvider>
+            <Routes />
+          </RequestProvider>
+        </AuthProvider>
+      </NavigationContainer>
+    );
+  }
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default App;
