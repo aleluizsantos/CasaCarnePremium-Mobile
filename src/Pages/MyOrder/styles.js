@@ -11,13 +11,13 @@ const Styles = StyleSheet.create({
     padding: 15,
   },
   textLoadMore: {
-    fontFamily: "Archivo_700Bold",
-    marginTop: 10,
-    alignContent: "center",
-    justifyContent: "center",
+    fontFamily: "Archivo_400Regular",
+    borderWidth: 1,
+    borderColor: "#c6c6c6",
     textAlign: "center",
     color: "#c8c8c8",
-    fontSize: 20,
+    padding: 15,
+    fontSize: 16,
   },
 });
 

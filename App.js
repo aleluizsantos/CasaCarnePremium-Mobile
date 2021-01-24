@@ -5,7 +5,6 @@ import React, { useEffect } from "react";
 import * as Updates from "expo-updates";
 import { NavigationContainer } from "@react-navigation/native";
 import { View, ActivityIndicator } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
 
 import {
   Archivo_400Regular,
@@ -29,6 +28,7 @@ const App = () => {
     Poppins_600SemiBold,
   });
 
+  // Verificar atualização no aplicativo no expo
   useEffect(() => {
     async function updateApp() {
       try {

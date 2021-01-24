@@ -12,10 +12,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import SERVER_URL from "../../Services/Server_URL";
 import AuthContext from "../../Contexts/auth";
 import RequestContext from "../../Contexts/requests";
 import ModalShow from "../../Components/ModalShow";
+import SERVER_URL from "../../Services/Server_URL";
 import styles from "./styles";
 
 const Home = () => {
@@ -39,21 +39,24 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    async function registerToScocket() {
-      const socket = await io(SERVER_URL.URL, {
+    (async () => {
+      const socket = io(SERVER_URL.URL, {
         transports: ["websocket"],
+        reconnectionAttempts: 15,
         jsonp: false,
       });
 
-      // socket.connect();
+      // socket.on("connect", () => {
+      //   console.log("Connectado");
+      // });
+
       socket.on("Operation", (response) => {
         updateStatusOpenClose(response.open_close);
       });
       socket.on("Update", (response) => {
         updateBDsytem(response.update);
       });
-    }
-    registerToScocket();
+    })();
   }, []);
 
   function handleDelivery(id) {
@@ -96,19 +99,20 @@ const Home = () => {
             style={styles.imgLogo}
           />
 
+          <TouchableOpacity
+            onPress={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <Text style={styles.status}>
+              {openClose ? "Aberto" : "Fechado"}
+            </Text>
+          </TouchableOpacity>
+
           {isloading ? (
             <ActivityIndicator color="#484848" size={48} />
           ) : (
             <>
-              <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <Text style={styles.status}>
-                  {openClose ? "Aberto" : "Fechado"}
-                </Text>
-              </TouchableOpacity>
               {openClose ? (
                 <>
                   <TouchableOpacity

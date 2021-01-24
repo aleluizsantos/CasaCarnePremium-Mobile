@@ -15,6 +15,8 @@ const MyOrder = () => {
   const [dataRequest, setDataRequest] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [visibleMoreOrder, setVisibleMoreOrder] = useState(true);
+  const [message, setMessage] = useState("Visualizar Pedidos finalizados");
+  const [bottonMoreOrders, setBottonMoreOrders] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -32,8 +34,16 @@ const MyOrder = () => {
     await api
       .get("request", { headers: { statusRequest: "6" } })
       .then((response) => {
-        setDataRequest([...dataRequest, ...response.data]);
-        setVisibleMoreOrder(false);
+        const { data } = response;
+        setDataRequest([...dataRequest, ...data]);
+        if (data.length <= 0) {
+          setBottonMoreOrders(true);
+          setMessage(
+            "Você não tem nenhum compra finalizada. Que tal iniciar uma compra, temos excelente ofertas."
+          );
+        } else {
+          setVisibleMoreOrder(false);
+        }
       });
   };
 
@@ -50,8 +60,12 @@ const MyOrder = () => {
             <MyOrdes key={item.id} request={item} />
           ))}
           {visibleMoreOrder && (
-            <TouchableOpacity onPress={handleIsLoadMoreOrders}>
-              <Text style={styles.textLoadMore}>Carregar todos</Text>
+            <TouchableOpacity
+              onPress={handleIsLoadMoreOrders}
+              disabled={bottonMoreOrders}
+              style={{ alignContent: "center", justifyContent: "center" }}
+            >
+              <Text style={styles.textLoadMore}>{message}</Text>
             </TouchableOpacity>
           )}
         </ScrollView>
