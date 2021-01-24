@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import SERVER_URL from "../../Services/Server_URL";
@@ -19,13 +20,13 @@ import styles from "./styles";
 
 const Home = () => {
   const { user } = useContext(AuthContext);
-  const [isloagind, setIsloading] = useState(true);
   const {
     addDeliveryType,
     openClose,
     checkOpenClose,
     updateStatusOpenClose,
     updateBDsytem,
+    isloading,
   } = useContext(RequestContext);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -35,7 +36,6 @@ const Home = () => {
     (async () => {
       checkOpenClose();
     })();
-    setIsloading(false);
   }, []);
 
   useEffect(() => {
@@ -59,10 +59,6 @@ const Home = () => {
   function handleDelivery(id) {
     addDeliveryType(id);
     navigation.navigate("Category");
-  }
-
-  if (isloagind) {
-    return <View />;
   }
 
   return (
@@ -99,51 +95,61 @@ const Home = () => {
             source={require("../../assets/Logo.png")}
             style={styles.imgLogo}
           />
-          <TouchableOpacity
-            onPress={() => {
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <Text style={styles.status}>
-              {openClose ? "Aberto" : "Fechado"}
-            </Text>
-          </TouchableOpacity>
 
-          {openClose ? (
+          {isloading ? (
+            <ActivityIndicator color="#484848" size={48} />
+          ) : (
             <>
               <TouchableOpacity
-                style={styles.button}
-                onPress={() => handleDelivery(1)}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
               >
-                <Image
-                  source={require("../../assets/car.png")}
-                  style={styles.iconButton}
-                />
-                <Text style={styles.textButton}>DELIVERY</Text>
+                <Text style={styles.status}>
+                  {openClose ? "Aberto" : "Fechado"}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => handleDelivery(2)}
-              >
-                <Image
-                  source={require("../../assets/position.png")}
-                  style={styles.iconButton}
-                />
-                <Text style={styles.textButton}>RETIRADA</Text>
-              </TouchableOpacity>
+              {openClose ? (
+                <>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => handleDelivery(1)}
+                  >
+                    <Image
+                      source={require("../../assets/car.png")}
+                      style={styles.iconButton}
+                    />
+                    <Text style={styles.textButton}>DELIVERY</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => handleDelivery(2)}
+                  >
+                    <Image
+                      source={require("../../assets/position.png")}
+                      style={styles.iconButton}
+                    />
+                    <Text style={styles.textButton}>RETIRADA</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleDelivery(3)}
+                >
+                  <AntDesign
+                    name="calendar"
+                    size={24}
+                    style={styles.iconButton}
+                  />
+                  <Text style={styles.textButton}>AGENDAMENTO</Text>
+                </TouchableOpacity>
+              )}
+              <Text style={styles.nameUser}>
+                Olá, {user.name.toUpperCase().split(" ")[0]}
+              </Text>
             </>
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleDelivery(3)}
-            >
-              <AntDesign name="calendar" size={24} style={styles.iconButton} />
-              <Text style={styles.textButton}>AGENDAMENTO</Text>
-            </TouchableOpacity>
           )}
-          <Text style={styles.nameUser}>
-            Olá, {user.name.toUpperCase().split(" ")[0]}
-          </Text>
         </View>
       </ImageBackground>
     </View>

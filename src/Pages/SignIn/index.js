@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-  Alert,
 } from "react-native";
 
 import AuthContext from "../../Contexts/auth";
@@ -22,8 +21,8 @@ import { colors } from "../../Styles";
 
 const SignIn = () => {
   const { signIn, message, messageClean } = useContext(AuthContext);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSecureText, setIsSecureText] = useState(true);
   const [validateInput, setValidateInput] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,7 +37,7 @@ const SignIn = () => {
   }, [message]);
 
   function clearMessageError() {
-    setTimeout(()=> messageClean(), 10000);
+    setTimeout(() => messageClean(), 10000);
   }
 
   function handleSignId() {
@@ -70,8 +69,8 @@ const SignIn = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : null}
     >
-        <Header />
-        <ScrollView>
+      <Header />
+      <ScrollView>
         <View style={styles.body}>
           <Text style={styles.titleBody}>
             Para iniciar o uso do aplicativo é necessario efetuar seu login!

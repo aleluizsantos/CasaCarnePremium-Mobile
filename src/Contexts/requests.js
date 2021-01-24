@@ -21,6 +21,7 @@ const RequestContextData = {
   updateStatusOpenClose: Function,
   checkOpenClose: Function,
   updateBDsytem: Function,
+  isloading: Boolean,
 };
 
 const RequestContext = createContext(RequestContextData);
@@ -35,6 +36,7 @@ export const RequestProvider = ({ children }) => {
   const [addressStore, setAddressStore] = useState("");
   const [openClose, setOpenClose] = useState(false);
   const [updateDB, setupdateDB] = useState("");
+  const [isloading, setIsloading] = useState(true);
 
   function updateBDsytem(timeStamp) {
     setupdateDB(timeStamp);
@@ -174,6 +176,7 @@ export const RequestProvider = ({ children }) => {
     await api.get("operation").then((response) => {
       const { open_close } = response.data;
       !!open_close && setOpenClose(Number(open_close));
+      setIsloading(false);
     });
   }
 
@@ -203,6 +206,7 @@ export const RequestProvider = ({ children }) => {
         checkOpenClose,
         updateStatusOpenClose,
         updateBDsytem,
+        isloading,
       }}
     >
       {children}

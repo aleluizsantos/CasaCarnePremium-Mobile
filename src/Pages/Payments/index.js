@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { BorderlessButton } from "react-native-gesture-handler";
@@ -39,6 +39,7 @@ const Payments = () => {
     addressStore,
   } = useContext(Requests);
   const navigation = useNavigation();
+  const route = useRoute();
   const [dateSelected, setDateSelected] = useState("");
   const [timeSelected, setTimeSelected] = useState("");
   const [dateTimeScheduling, setdateTimeScheduling] = useState("");
@@ -61,8 +62,9 @@ const Payments = () => {
   const [note, setNote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [validateInput, setValidateInput] = useState(false);
-  const [modalFinally, setModalFinally] = useState(false);
   const [modal, setModal] = useState(false);
+
+  const { vTaxaDelivery } = route.params;
 
   useEffect(() => {
     let isCancelled = true;
@@ -609,12 +611,14 @@ const Payments = () => {
           </View>
           <View style={styles.fieldBlock}>
             <Text style={styles.labelTotal}>Taxa de entrega</Text>
-            <Text style={styles.labelValueTotal}>R$ 0,00</Text>
+            <Text style={styles.labelValueTotal}>
+              {formatMoney(vTaxaDelivery)}
+            </Text>
           </View>
           <View style={styles.fieldBlock}>
             <Text style={styles.labelTotalEnd}>Total</Text>
             <Text style={styles.labelValueEnd}>
-              {formatMoney(totalCar - discount)}
+              {formatMoney(parseFloat(vTaxaDelivery) + totalCar - discount)}
             </Text>
           </View>
 
