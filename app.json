@@ -2,7 +2,7 @@
   "expo": {
     "name": "Casa Premium",
     "slug": "CasaPremium",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -19,11 +19,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lesoftware.casacarnepremium",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.2"
     },
     "android": {
       "package": "com.lesoftware.casacarnepremium",
       "versionCode": 1,
+      "permissions": ["WRITE_SETTINGS", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

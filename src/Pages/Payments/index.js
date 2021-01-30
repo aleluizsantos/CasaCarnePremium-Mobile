@@ -12,8 +12,6 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-  Modal,
-  Image,
   Alert,
 } from "react-native";
 
@@ -22,7 +20,6 @@ import ModalShow from "../../Components/ModalShow";
 import styles from "./styles";
 import Header from "../../Components/Header";
 import { colors, formatMoney } from "../../Styles";
-import shopping from "../../assets/shopping.png";
 import api from "../../Services/api";
 import ModalNotice from "../../Components/ModalNotice";
 
@@ -130,12 +127,13 @@ const Payments = () => {
   function handleCleanSchedule() {
     setDateSelected("");
     setTimeSelected("");
+    setdateTimeScheduling(null);
   }
 
   function handleConfirm(_date) {
     const datetime = formatter.format(_date);
     const [date, time] = datetime.split(" ");
-    setdateTimeScheduling(datetime);
+    setdateTimeScheduling(_date);
     setDateSelected(date);
     setTimeSelected(time);
     hideDatePicker();
@@ -218,7 +216,7 @@ const Payments = () => {
       } else {
         setModal(!modal);
 
-        await api.post("request/create", dataRequest).then((response) => {
+        await api.post("request/create", dataRequest).then(() => {
           setDateSelected("");
           setTimeSelected("");
           setSelectAddress("");

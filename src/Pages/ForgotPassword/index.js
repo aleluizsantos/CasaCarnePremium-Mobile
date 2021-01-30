@@ -13,7 +13,7 @@ function ForgotPassword() {
 
   function handleForgotPassword() {
     if (!!email) {
-      navigation.navigate('Login');
+      navigation.navigate("Login");
     } else {
       setValidateInput(true);
     }

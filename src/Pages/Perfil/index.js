@@ -10,11 +10,9 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
-import { AntDesign } from "@expo/vector-icons";
 
 import Auth from "../../Contexts/auth";
 import styles from "./styles";
-import { colors } from "../../Styles";
 
 function Perfil() {
   const { user } = useContext(Auth);
@@ -113,9 +111,7 @@ function Perfil() {
 
       <View style={styles.avatar}>
         <Image
-          source={{
-            uri: `http://mentorbook.globalmentoringgroup.com/assets/icon-user-36cec449c5e6765b4cc06b048cd08a40d75e049c5337599effe735e44d5d6834.png`,
-          }}
+          source={require("../../assets/user.png")}
           style={styles.imgAvatar}
         />
         {/* <TouchableOpacity style={styles.buttonCamera} onPress={() => Alert.alert('teste')}>

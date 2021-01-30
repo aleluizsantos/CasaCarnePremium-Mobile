@@ -8,7 +8,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+
 import { AntDesign } from "@expo/vector-icons";
 
 import api from "../../Services/api";

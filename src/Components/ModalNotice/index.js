@@ -12,7 +12,7 @@ import { colors } from "../../Styles";
 const { height } = Dimensions.get("window");
 
 const ModalNotice = ({ show, close }) => {
-  const [state, setState] = useState({
+  const [state] = useState({
     opacity: new Animated.Value(0),
     container: new Animated.Value(height),
     modal: new Animated.Value(height),
@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 10,
     backgroundColor: colors.primary,
-    // backgroundColor: "#9b59b6",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 30,

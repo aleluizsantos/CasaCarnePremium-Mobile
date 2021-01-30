@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { TextInputMask } from "react-native-masked-text";
 import axios from "axios";
@@ -19,9 +18,9 @@ import Header from "../../Components/Header";
 import api from "../../Services/api";
 import styles from "./styles";
 import { colors } from "../../Styles";
+import { ScrollView } from "react-native-gesture-handler";
 
 const RegisterAddress = () => {
-  const navigation = useNavigation();
   const [listAdrress, setListAdrress] = useState([]);
   const [cep, setCep] = useState("");
   const [address, setAddress] = useState("");
@@ -32,13 +31,14 @@ const RegisterAddress = () => {
   const [active, setActive] = useState(false);
   const [validateInput, setValidateInput] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [updateAdrressId, setUpdateAddressId] = useState("");
+  const [updateAdrressId, setUpdateAddressId] = useState(null);
+  const [updateAddressUserId, setUpdateAddressUserId] = useState(null);
   const [pointReference, setPointReference] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Carregar os endereços do usuário
+  // Carregar todos os endereços do usuário
   useEffect(() => {
-    async function loadingAddress() {
+    (async () => {
       await api
         .get("/address")
         .then((response) => {
@@ -47,10 +47,32 @@ const RegisterAddress = () => {
         .catch((error) => {
           console.log("Page-address", error);
         });
-    }
-    loadingAddress();
+    })();
   }, []);
 
+  // Definir o endereço como Padrão
+  async function handleActiveAddress(address) {
+    if (address.active) {
+      Alert.alert(
+        "Ativar endereço padrão",
+        "Seu endereço de entrega já é padrão."
+      );
+    } else {
+      // atualizar a lista
+      const newListAddress = listAdrress.map((item) => ({
+        ...item,
+        active: item.id == address.id ? true : false,
+      }));
+      setListAdrress(newListAddress);
+      Alert.alert(
+        "Alterado enderço padrão",
+        "Seu endereço padrão de entrega foi alterado com sucesso."
+      );
+      await api.put(`/address/active/${address.id}`, {});
+    }
+  }
+
+  // Excluir um endereço da lista
   async function handleDeleteAddress(_id) {
     const responseDelete = await api.delete(`/address/delete/${_id}`);
 
@@ -61,7 +83,7 @@ const RegisterAddress = () => {
       setListAdrress(newListAddress);
     }
   }
-
+  // Abre o modal com todos os campos vazios novo Endereço
   function handleAddAddress() {
     setCep("");
     setAddress("");
@@ -76,6 +98,7 @@ const RegisterAddress = () => {
     setModalVisible(!modalVisible);
   }
 
+  // Carrega os dados no modal para atualizar
   function handleEditAddress(_itemAddress) {
     setAddress(_itemAddress.address);
     setCep(_itemAddress.cep);
@@ -86,12 +109,13 @@ const RegisterAddress = () => {
     setActive(_itemAddress.active);
     setPointReference(_itemAddress.pointReference);
 
-    setUpdateAddressId(_itemAddress.id);
+    setUpdateAddressId(_itemAddress.id); //Se possuir um id, indica que campo para editar
+    setUpdateAddressUserId(_itemAddress.user_id);
     setValidateInput(false);
 
     setModalVisible(!modalVisible);
   }
-
+  // Criar ou Editar um endereço
   async function handleSubmit() {
     if (!!address && !!number && !!neighborhood && !!city && !!uf) {
       const dataAddress = {
@@ -102,12 +126,26 @@ const RegisterAddress = () => {
         city,
         uf,
         pointReference,
-        active: listAdrress.length <= 0 ? true : false,
+        active: listAdrress.length <= 0 ? true : !!active ? active : false,
       };
 
-      await api.post("/address/create", dataAddress);
+      if (updateAdrressId !== null) {
+        // Editar campo
+        await api.put(`/address/${updateAdrressId}`, dataAddress);
+        const newListAddress = listAdrress.filter((item) => {
+          return item.id !== updateAdrressId;
+        });
+        setListAdrress([
+          ...newListAddress,
+          { id: updateAdrressId, ...dataAddress, user_id: updateAddressUserId },
+        ]);
+        setUpdateAddressId(null);
+      } else {
+        // Criar um novo endereço
+        await api.post("/address/create", dataAddress);
+        setListAdrress([...listAdrress, dataAddress]);
+      }
 
-      setListAdrress([...listAdrress, dataAddress]);
       setModalVisible(!modalVisible);
     } else {
       setValidateInput(true);
@@ -121,7 +159,8 @@ const RegisterAddress = () => {
     if (lenghtValue === 9) queryCep(value);
     setCep(value);
   };
-
+  // Realiza um consulta via get buscando o cep
+  // https://viacep.com.br/ws/${parseCep}/json/`
   async function queryCep(cep) {
     setIsLoading(true);
     const parseCep = cep.replace(/[^0-9]/g, "");
@@ -162,152 +201,153 @@ const RegisterAddress = () => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-        }}
+        onRequestClose={() => {}}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            {!!updateAdrressId && (
-              <Text style={styles.titleUpdate}>Editar Endereço</Text>
-            )}
-            <View style={styles.form}>
-              <View>
-                <View style={styles.Touchable}>
-                  {isLoading ? (
-                    <ActivityIndicator color={colors.success} size="large" />
-                  ) : (
-                    <Feather name="link" size={24} style={styles.iconInput} />
-                  )}
-                </View>
-                <TextInputMask
-                  style={styles.input}
-                  placeholder="CEP"
-                  autoFocus={true}
-                  type={"zip-code"}
-                  value={cep}
-                  onChangeText={(value) => handleSetCep(value)}
-                  returnKeyType="next"
-                  onSubmitEditing={() => {}}
-                  blurOnSubmit={false}
-                />
-              </View>
-              <View style={styles.fieldGroup}>
-                <View style={styles.groupAddress}>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      validateInput && !!!address && styles.validate,
-                    ]}
-                    placeholder="Endereço"
-                    value={address}
-                    onChangeText={setAddress}
+        <ScrollView>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              {!!updateAdrressId && (
+                <Text style={styles.titleUpdate}>Editar Endereço</Text>
+              )}
+              <View style={styles.form}>
+                <View>
+                  <View style={styles.Touchable}>
+                    {isLoading ? (
+                      <ActivityIndicator color={colors.success} size="large" />
+                    ) : (
+                      <Feather name="link" size={24} style={styles.iconInput} />
+                    )}
+                  </View>
+                  <TextInputMask
+                    style={styles.input}
+                    placeholder="CEP"
+                    autoFocus={true}
+                    type={"zip-code"}
+                    value={cep}
+                    onChangeText={(value) => handleSetCep(value)}
                     returnKeyType="next"
                     onSubmitEditing={() => {}}
                     blurOnSubmit={false}
                   />
                 </View>
-                <View style={styles.groupNumber}>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      validateInput && !!!number && styles.validate,
-                    ]}
-                    keyboardType="decimal-pad"
-                    placeholder="Nº"
-                    value={number}
-                    onChangeText={setNumber}
-                    returnKeyType="next"
-                    onSubmitEditing={() => {}}
-                    blurOnSubmit={false}
-                  />
+                <View style={styles.fieldGroup}>
+                  <View style={styles.groupAddress}>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        validateInput && !!!address && styles.validate,
+                      ]}
+                      placeholder="Endereço"
+                      value={address}
+                      onChangeText={setAddress}
+                      returnKeyType="next"
+                      onSubmitEditing={() => {}}
+                      blurOnSubmit={false}
+                    />
+                  </View>
+                  <View style={styles.groupNumber}>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        validateInput && !!!number && styles.validate,
+                      ]}
+                      keyboardType="decimal-pad"
+                      placeholder="Nº"
+                      value={number}
+                      onChangeText={setNumber}
+                      returnKeyType="next"
+                      onSubmitEditing={() => {}}
+                      blurOnSubmit={false}
+                    />
+                  </View>
                 </View>
-              </View>
-              <View>
-                <TextInput
-                  style={[
-                    styles.input,
-                    validateInput && !!!neighborhood && styles.validate,
-                  ]}
-                  placeholder="Bairro"
-                  keyboardType="default"
-                  value={neighborhood}
-                  onChangeText={setNeighborhood}
-                  returnKeyType="next"
-                  onSubmitEditing={() => {}}
-                  blurOnSubmit={false}
-                  // onBlur={() => queryCep(cep)}
-                />
-              </View>
-              <View style={styles.fieldGroup}>
-                <View style={styles.groupAddress}>
+                <View>
                   <TextInput
                     style={[
                       styles.input,
-                      validateInput && !!!city && styles.validate,
+                      validateInput && !!!neighborhood && styles.validate,
                     ]}
-                    placeholder="Cidade"
-                    value={city}
-                    onChangeText={setCity}
-                    returnKeyType="next"
-                    onSubmitEditing={() => {}}
-                    blurOnSubmit={false}
-                  />
-                </View>
-                <View style={styles.groupNumber}>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      validateInput && !!!uf && styles.validate,
-                    ]}
+                    placeholder="Bairro"
                     keyboardType="default"
-                    placeholder="UF"
-                    value={uf}
-                    onChangeText={setUf}
+                    value={neighborhood}
+                    onChangeText={setNeighborhood}
                     returnKeyType="next"
                     onSubmitEditing={() => {}}
                     blurOnSubmit={false}
+                    // onBlur={() => queryCep(cep)}
                   />
                 </View>
-              </View>
+                <View style={styles.fieldGroup}>
+                  <View style={styles.groupAddress}>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        validateInput && !!!city && styles.validate,
+                      ]}
+                      placeholder="Cidade"
+                      value={city}
+                      onChangeText={setCity}
+                      returnKeyType="next"
+                      onSubmitEditing={() => {}}
+                      blurOnSubmit={false}
+                    />
+                  </View>
+                  <View style={styles.groupNumber}>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        validateInput && !!!uf && styles.validate,
+                      ]}
+                      keyboardType="default"
+                      placeholder="UF"
+                      value={uf}
+                      onChangeText={setUf}
+                      returnKeyType="next"
+                      onSubmitEditing={() => {}}
+                      blurOnSubmit={false}
+                    />
+                  </View>
+                </View>
 
-              <View>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Ponto de Referencia"
-                  keyboardType="default"
-                  value={pointReference}
-                  onChangeText={setPointReference}
-                  returnKeyType="next"
-                  onSubmitEditing={() => {}}
-                  blurOnSubmit={false}
-                  // onBlur={() => queryCep(cep)}
-                />
-              </View>
+                <View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Ponto de Referencia"
+                    keyboardType="default"
+                    value={pointReference}
+                    onChangeText={setPointReference}
+                    returnKeyType="next"
+                    onSubmitEditing={() => {}}
+                    blurOnSubmit={false}
+                    // onBlur={() => queryCep(cep)}
+                  />
+                </View>
 
-              <View style={styles.containerButtonAdd}>
-                <TouchableOpacity
-                  style={styles.buttonRegister}
-                  onPress={handleSubmit}
-                >
-                  <Text style={styles.titleButtonRegister}>Salvar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  onPress={() => {
-                    setModalVisible(!modalVisible);
-                    setUpdateAddressId("");
-                  }}
-                >
-                  <Text style={styles.titleButtonCancel}>Voltar</Text>
-                </TouchableOpacity>
+                <View style={styles.containerButtonAdd}>
+                  <TouchableOpacity
+                    style={styles.buttonRegister}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={styles.titleButtonRegister}>Salvar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancel}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                      setUpdateAddressId(null);
+                    }}
+                  >
+                    <Text style={styles.titleButtonCancel}>Voltar</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
 
       <Header goBack={true} />
+
       <View style={styles.body}>
         <View>
           <View style={styles.titleAddress}>
@@ -318,20 +358,30 @@ const RegisterAddress = () => {
           <FlatList
             data={listAdrress}
             keyExtractor={(item, index) => index.toString()}
-            // keyExtractor={(itemAddress) => Number(itemAddress.id)}
             renderItem={({ item }) => (
-              <View style={styles.address}>
+              <View
+                style={[
+                  styles.address,
+                  item.active && {
+                    borderLeftWidth: 8,
+                    borderLeftColor: colors.success,
+                  },
+                ]}
+              >
                 <View>
-                  <Text
-                    style={styles.textAddress}
-                  >{`${item.address}, ${item.number}`}</Text>
-                  <Text style={styles.textAddress}>
-                    {item.neighborhood} - {item.cep}
-                  </Text>
-                  <Text
-                    style={styles.textAddress}
-                  >{`${item.city}/${item.uf}`}</Text>
+                  <TouchableOpacity onPress={() => handleActiveAddress(item)}>
+                    <Text
+                      style={styles.textAddress}
+                    >{`${item.address}, ${item.number}`}</Text>
+                    <Text style={styles.textAddress}>
+                      {item.neighborhood} - {item.cep}
+                    </Text>
+                    <Text
+                      style={styles.textAddress}
+                    >{`${item.city}/${item.uf}`}</Text>
+                  </TouchableOpacity>
                 </View>
+
                 <View style={styles.iconeAddress}>
                   <TouchableOpacity
                     onPress={() => handleEditAddress(item)}
