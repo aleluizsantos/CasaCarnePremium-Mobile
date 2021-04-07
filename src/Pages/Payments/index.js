@@ -60,6 +60,7 @@ const Payments = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [validateInput, setValidateInput] = useState(false);
   const [modal, setModal] = useState(false);
+  const [cash, setCash] = useState(0);
 
   const { vTaxaDelivery } = route.params;
 
@@ -160,6 +161,7 @@ const Payments = () => {
   }
 
   async function handleTypePayment(itemPayment) {
+    itemPayment.id !== 1 && setCash(0);
     addPaymentType(itemPayment);
     !!paymentType && setshowModalPayment(!showModalPayment);
     setCoupon("");
@@ -205,6 +207,7 @@ const Payments = () => {
         PointReferences: deliveryType === 2 ? "" : pointReference,
         scheduleDateTime: dateTimeScheduling,
         items: itemCar,
+        cash: cash,
       };
 
       if (deliveryType === 1 && !!!selectAddress) {
@@ -432,36 +435,52 @@ const Payments = () => {
               <Text style={styles.labelItem}>Forma de pagamento</Text>
             </View>
             {!!paymentType ? (
-              <View style={styles.paymentSelect}>
-                <Text style={styles.textAddress}>{paymentType.type}</Text>
-                <BorderlessButton
-                  onPress={() => setshowModalPayment(!showModalPayment)}
-                >
-                  <FontAwesome5
-                    name="ellipsis-h"
-                    size={24}
-                    color={colors.primary}
-                  />
-                </BorderlessButton>
+              <>
+                <View style={styles.paymentSelect}>
+                  <Text style={styles.textAddress}>{paymentType.type}</Text>
+                  <BorderlessButton
+                    onPress={() => setshowModalPayment(!showModalPayment)}
+                  >
+                    <FontAwesome5
+                      name="ellipsis-h"
+                      size={24}
+                      color={colors.primary}
+                    />
+                  </BorderlessButton>
 
-                <ModalShow
-                  title="Forma de Pagamento"
-                  visible={showModalPayment}
-                >
-                  {dataPaymentType.map((itemPay) => (
-                    <TouchableOpacity
-                      key={itemPay.id}
-                      onPress={() => handleTypePayment(itemPay)}
-                      style={[
-                        styles.buttomSelectAddress,
-                        itemPay.id === paymentType.id && styles.addressActive,
-                      ]}
-                    >
-                      <Text style={styles.textAddress}>{itemPay.type}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </ModalShow>
-              </View>
+                  <ModalShow
+                    title="Forma de Pagamento"
+                    visible={showModalPayment}
+                  >
+                    {dataPaymentType.map((itemPay) => (
+                      <TouchableOpacity
+                        key={itemPay.id}
+                        onPress={() => handleTypePayment(itemPay)}
+                        style={[
+                          styles.buttomSelectAddress,
+                          itemPay.id === paymentType.id && styles.addressActive,
+                        ]}
+                      >
+                        <Text style={styles.textAddress}>{itemPay.type}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ModalShow>
+                </View>
+                {paymentType.id === 1 && (
+                  <View style={styles.inputBlock}>
+                    <Text style={styles.contentThing}>Troco para</Text>
+                    <View>
+                      <TextInput
+                        style={[styles.input, { width: 150 }]}
+                        keyboardType="numeric"
+                        placeholder="0.00"
+                        value={cash}
+                        onChangeText={setCash}
+                      />
+                    </View>
+                  </View>
+                )}
+              </>
             ) : (
               <>
                 {dataPaymentType.map((itemPay) => (

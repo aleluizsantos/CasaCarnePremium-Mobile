@@ -314,6 +314,12 @@ const Styles = StyleSheet.create({
     fontFamily: "Archivo_700Bold",
     color: colors.darker,
   },
+  contentThing: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: fonts.small,
+    color: "#000",
+    paddingLeft: 20,
+  },
 });
 
 export default Styles;
