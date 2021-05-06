@@ -1,7 +1,8 @@
 import "react-native-gesture-handler";
 import "intl";
 import "intl/locale-data/jsonp/pt-BR";
-import React, { useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import React, { useEffect, useState } from "react";
 import * as Updates from "expo-updates";
 import { NavigationContainer } from "@react-navigation/native";
 import { View, ActivityIndicator } from "react-native";
@@ -18,9 +19,19 @@ import {
 
 import { AuthProvider } from "./src/Contexts/auth";
 import { RequestProvider } from "./src/Contexts/requests";
+import { registerForPushNotificationsAsync } from "./src/Components/Notification";
 import Routes from "./src/routes";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 const App = () => {
+  const [expoPushToken, setExpoPushToken] = useState("");
   let [fontsLoaded] = useFonts({
     Archivo_400Regular,
     Archivo_700Bold,
@@ -40,6 +51,9 @@ const App = () => {
       } catch (error) {}
     }
     updateApp();
+    registerForPushNotificationsAsync().then((response) =>
+      setExpoPushToken(response)
+    );
   }, []);
 
   if (!fontsLoaded) {

@@ -16,6 +16,7 @@ import AuthContext from "../../Contexts/auth";
 import RequestContext from "../../Contexts/requests";
 import ModalShow from "../../Components/ModalShow";
 import SERVER_URL from "../../Services/Server_URL";
+import { schedulePushNotification } from "../../Components/Notification";
 import styles from "./styles";
 
 const Home = () => {
@@ -42,14 +43,14 @@ const Home = () => {
     (async () => {
       const socket = io(SERVER_URL.URL, {
         transports: ["websocket"],
-        reconnectionAttempts: 15,
         jsonp: false,
       });
 
-      // socket.on("connect", () => {
-      //   console.log("Connectado");
-      // });
+      socket.emit("join", { user_id: user.id });
 
+      socket.on("UpdateStatusMyOrder", async (response) => {
+        await schedulePushNotification(response.descriptionNextActionRequest);
+      });
       socket.on("Operation", (response) => {
         updateStatusOpenClose(response.open_close);
       });

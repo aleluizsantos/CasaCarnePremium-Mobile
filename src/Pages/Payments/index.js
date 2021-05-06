@@ -60,7 +60,7 @@ const Payments = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [validateInput, setValidateInput] = useState(false);
   const [modal, setModal] = useState(false);
-  const [cash, setCash] = useState(0);
+  const [cash, setCash] = useState(0.0);
 
   const { vTaxaDelivery } = route.params;
 

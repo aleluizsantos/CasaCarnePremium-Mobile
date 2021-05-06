@@ -39,6 +39,14 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 20,
   },
+  timeDelivery: {
+    position: "absolute",
+    top: -2,
+    right: 10,
+    fontFamily: "Archivo_400Regular",
+    fontSize: fonts.small,
+    color: colors.regular,
+  },
 });
 
 export default styles;

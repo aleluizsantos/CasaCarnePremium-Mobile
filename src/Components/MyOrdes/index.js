@@ -25,7 +25,13 @@ const MyOrdes = ({ request }) => {
           </Text>
         </View>
       </View>
-      <Text style={styles.total}>{formatMoney(request.totalPurchase)}</Text>
+
+      <View style={styles.fieldGroup}>
+        <Text style={styles.total}>{formatMoney(request.totalPurchase)}</Text>
+
+        <Text style={styles.timeDelivery}>{request.timedelivery}</Text>
+      </View>
+
       <View style={styles.fieldGroup}>
         <TouchableOpacity onPress={() => handleGoToDetailsMyOrder(request)}>
           <Text style={styles.details}>Detalhes</Text>

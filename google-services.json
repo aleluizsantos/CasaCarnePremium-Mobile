@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "649872303960",
+    "project_id": "casa-carne-premium",
+    "storage_bucket": "casa-carne-premium.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649872303960:android:0ec55d94b51da7efb0a72d",
+        "android_client_info": {
+          "package_name": "com.lesoftware.casacarnepremium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649872303960-3lstk284kfhg1ksv4uq40gl9ojmfhfl9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lesoftware.casacarnepremium",
+            "certificate_hash": "90d879673b2a9741b76e2d6ade2260780faafb19"
+          }
+        },
+        {
+          "client_id": "649872303960-k9sbl6hse75cmkdjj8ca1ogtivi7tb6f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU66hgG8cvJK8yMVLhVQ_5Fzmg_gA2gl0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649872303960-k9sbl6hse75cmkdjj8ca1ogtivi7tb6f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
