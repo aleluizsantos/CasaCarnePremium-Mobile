@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import io from "socket.io-client";
+import configApp from "../../../app.json";
 
 import {
   View,
@@ -41,6 +42,7 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
+      // Realizar conexão via socket
       const socket = io(SERVER_URL.URL, {
         transports: ["websocket"],
         jsonp: false,
@@ -48,9 +50,6 @@ const Home = () => {
 
       socket.emit("join", { user_id: user.id });
 
-      socket.on("UpdateStatusMyOrder", async (response) => {
-        await schedulePushNotification(response.descriptionNextActionRequest);
-      });
       socket.on("Operation", (response) => {
         updateStatusOpenClose(response.open_close);
       });
@@ -156,6 +155,7 @@ const Home = () => {
             </>
           )}
         </View>
+        <Text style={styles.version}>version {configApp.expo.version}</Text>
       </ImageBackground>
     </View>
   );

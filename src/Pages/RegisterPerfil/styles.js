@@ -29,9 +29,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingHorizontal: 24,
-    fontSize: 16,
+    fontSize: 14,
     borderWidth: 1,
     borderColor: colors.light,
+    fontFamily: "Archivo_700Bold",
   },
   Touchable: {
     position: "absolute",

@@ -4,7 +4,7 @@ import * as Notifications from "expo-notifications";
 export const schedulePushNotification = async (message) => {
   return await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Casa de Carne! 📌",
+      title: "Casa de Carne Premium! 📌",
       body: message,
     },
     trigger: { seconds: 2 },
@@ -14,9 +14,8 @@ export const schedulePushNotification = async (message) => {
 export const registerForPushNotificationsAsync = async () => {
   let token;
   if (Constants.isDevice) {
-    const {
-      status: existingStatus,
-    } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();

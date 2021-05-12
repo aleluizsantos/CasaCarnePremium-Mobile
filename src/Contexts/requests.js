@@ -1,5 +1,7 @@
-import React, { useState, createContext } from "react";
+import React, { useState, useContext, createContext } from "react";
+import { Alert } from "react-native";
 import api from "../Services/api";
+import auth from "../Contexts/auth";
 
 const RequestContextData = {
   itemCar: [Object],
@@ -29,6 +31,7 @@ const RequestContext = createContext(RequestContextData);
 export default RequestContext;
 
 export const RequestProvider = ({ children }) => {
+  const { signOut } = useContext(auth);
   const [itemCar, setItemCar] = useState([]);
   const [paymentType, setPaymentType] = useState("");
   const [deliveryType, setDeliveryType] = useState("");
@@ -173,11 +176,21 @@ export const RequestProvider = ({ children }) => {
   // Check se o estabelecimento esta Aberto ou Fechado
   //------------------------------------------------------------------------
   async function checkOpenClose() {
-    await api.get("operation").then((response) => {
-      const { open_close } = response.data;
-      !!open_close && setOpenClose(Number(open_close));
-      setIsloading(false);
-    });
+    try {
+      await api.get("operation").then((response) => {
+        const { open_close } = response.data;
+        !!open_close && setOpenClose(Number(open_close));
+        setIsloading(false);
+      });
+    } catch (error) {
+      Alert.alert("Erro no Servidor", error.message, [
+        {
+          text: "OK",
+          onPress: () => signOut(),
+          style: "cancel",
+        },
+      ]);
+    }
   }
 
   function updateStatusOpenClose(status) {

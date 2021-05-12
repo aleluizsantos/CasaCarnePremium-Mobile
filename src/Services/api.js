@@ -6,6 +6,8 @@ const url = Server_URL.URL;
 
 const api = axios.create({
   baseURL: url,
+  timeout: 5000,
+  timeoutErrorMessage: "Error internal Server",
 });
 
 // Add a request interceptor
@@ -13,10 +15,21 @@ const api = axios.create({
 api.interceptors.request.use(
   async function (config) {
     // Capturar o token salvo no dispositivo
-    await AsyncStorage.getItem("@Premium:token").then((tokenUser) => {
-      if (tokenUser) {
+    await AsyncStorage.multiGet([
+      "@Premium:token",
+      "@Premium:tokenPushNotification",
+    ]).then((response) => {
+      if (response) {
+        const tokenUser = response[0][1];
+        const tokenPush = response[1][1];
+        // o response retorna uma ARRAY de matriz
+        // response[0][0]) // Key1
+        // response[0][1]) // Value1
+        // response[1][0]) // Key2
+        // response[1][1]) // Value2
         // Definir o token no Header Authorization em toda requisição
         config.headers.Authorization = `Bearer ${tokenUser}`;
+        config.headers.tokenPushNotification = tokenPush;
       }
     });
     return config;

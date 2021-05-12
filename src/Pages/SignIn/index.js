@@ -37,7 +37,7 @@ const SignIn = () => {
   }, [message]);
 
   function clearMessageError() {
-    setTimeout(() => messageClean(), 10000);
+    setTimeout(() => messageClean(), 30000);
   }
 
   function handleSignId() {

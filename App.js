@@ -2,9 +2,10 @@ import "react-native-gesture-handler";
 import "intl";
 import "intl/locale-data/jsonp/pt-BR";
 import * as Notifications from "expo-notifications";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import * as Updates from "expo-updates";
 import { NavigationContainer } from "@react-navigation/native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { View, ActivityIndicator } from "react-native";
 
 import {
@@ -31,7 +32,6 @@ Notifications.setNotificationHandler({
 });
 
 const App = () => {
-  const [expoPushToken, setExpoPushToken] = useState("");
   let [fontsLoaded] = useFonts({
     Archivo_400Regular,
     Archivo_700Bold,
@@ -50,10 +50,26 @@ const App = () => {
         }
       } catch (error) {}
     }
-    updateApp();
-    registerForPushNotificationsAsync().then((response) =>
-      setExpoPushToken(response)
+    registerForPushNotificationsAsync().then((tokenPush) =>
+      AsyncStorage.setItem("@Premium:tokenPushNotification", tokenPush)
     );
+
+    const backgroundSubscription =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("==>", response);
+      });
+    //When the app is open
+    const foregroundSubscription =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("==>", notification);
+      });
+
+    updateApp();
+
+    return () => {
+      backgroundSubscription.remove();
+      foregroundSubscription.remove();
+    };
   }, []);
 
   if (!fontsLoaded) {

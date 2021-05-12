@@ -47,11 +47,11 @@ const Styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   contentAttend: {
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingVertical: 10,
     marginLeft: 40,
   },
-  textAttend:{
+  textAttend: {
     fontFamily: "Archivo_400Regular",
     fontSize: fonts.regular,
     paddingVertical: 5,
@@ -59,8 +59,8 @@ const Styles = StyleSheet.create({
   buttonAttend: {
     backgroundColor: colors.lighter,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     margin: 5,
     padding: 10,
   },
@@ -68,14 +68,21 @@ const Styles = StyleSheet.create({
     fontFamily: "Archivo_400Regular",
     fontSize: 14,
   },
-  messageError:{
-    fontFamily: 'Archivo_400Regular',
+  messageError: {
+    fontFamily: "Archivo_400Regular",
     fontSize: fonts.big,
     lineHeight: 24,
     paddingHorizontal: 50,
     color: colors.dark,
     textAlign: "center",
-  }
+  },
+  version: {
+    position: "absolute",
+    color: colors.lighter,
+    fontSize: fonts.small,
+    bottom: 20,
+    right: 20,
+  },
 });
 
 export default Styles;

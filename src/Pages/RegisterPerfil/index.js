@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
 import { TextInputMask } from "react-native-masked-text"; //https://github.com/benhurott/react-native-masked-text
 
 import {
@@ -41,29 +42,35 @@ const RegisterPerfil = () => {
 
   async function handleSubmit() {
     if (!!name && !!email && !!phone && !!password && !!passwordConfirmed) {
-      if(password === passwordConfirmed){
-        await api.post("auth/register", {
-          name,
-          email,
-          phone,
-          password,
-        }).then((response) => {
-          Alert.alert("Cadastro", "Realizado com sucesso!");
-          navigation.navigate("Login");  
-        })
-        .catch(function(error){
-         if(error.response) {
-          Alert.alert("Erro", "E-mail já cadastrado");
-         }else if( error.request) {
-          console.log(error.request);
-         }else{
-          console.log('Error', error.message);
-         }
-        });
-      }else{
-        Alert.alert('Atenção', 'Sua senha não confere');
-        setPassword('');
-        setPasswordConfirmed('');
+      if (password === passwordConfirmed) {
+        const storageTokenPush = await AsyncStorage.getItem(
+          "@Premium:tokenPushNotification"
+        );
+        await api
+          .post("auth/register", {
+            name,
+            email,
+            phone,
+            password,
+            tokenPushNotification: storageTokenPush,
+          })
+          .then((response) => {
+            Alert.alert("Cadastro", "Realizado com sucesso!");
+            navigation.navigate("Login");
+          })
+          .catch(function (error) {
+            if (error.response) {
+              Alert.alert("Erro", "E-mail já cadastrado");
+            } else if (error.request) {
+              console.log(error.request);
+            } else {
+              console.log("Error", error.message);
+            }
+          });
+      } else {
+        Alert.alert("Atenção", "Sua senha não confere");
+        setPassword("");
+        setPasswordConfirmed("");
         setValidateInput(true);
       }
     } else {
@@ -191,8 +198,8 @@ const RegisterPerfil = () => {
                   passwordInput = input;
                 }}
                 style={[
-                  styles.input,
                   validateInput && !!!password && styles.validate,
+                  styles.input,
                 ]}
                 placeholder="Senha"
                 secureTextEntry={isSecureText}
@@ -223,8 +230,8 @@ const RegisterPerfil = () => {
                   passwordConfirmedInput = input;
                 }}
                 style={[
-                  styles.input,
                   validateInput && !!!passwordConfirmed && styles.validate,
+                  styles.input,
                 ]}
                 placeholder="Confirme Senha"
                 secureTextEntry={isSecureText}
