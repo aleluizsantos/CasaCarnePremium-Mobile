@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
     color: colors.regular,
   },
-  messageError:{
+  messageError: {
     color: colors.red,
-    textAlign: 'center',
-    paddingBottom: 10
+    textAlign: "center",
+    paddingBottom: 10,
   },
   groupButton: {
     flexDirection: "row",

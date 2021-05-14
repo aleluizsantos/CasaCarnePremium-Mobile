@@ -10,9 +10,9 @@ const Styles = StyleSheet.create({
     zIndex: 1,
   },
   TitleContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginBottom: 8,
@@ -20,12 +20,12 @@ const Styles = StyleSheet.create({
     borderBottomColor: colors.light,
   },
   title: {
-    fontFamily: 'Archivo_700Bold',
+    fontFamily: "Archivo_700Bold",
     fontSize: 16,
     color: colors.primary,
   },
   breadcrumb: {
-    fontFamily: 'Archivo_400Regular',
+    fontFamily: "Archivo_400Regular",
     fontSize: 14,
     color: colors.primary,
   },
@@ -37,34 +37,48 @@ const Styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: colors.white,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 55,
     padding: 10,
     justifyContent: "space-between",
-    alignItems: 'center',
-    overflow: 'visible'
+    alignItems: "center",
+    overflow: "visible",
   },
-  buttonCategory:{
-    alignItems: 'center',
-    justifyContent: 'center',
+  buttonCategory: {
+    alignItems: "center",
+    justifyContent: "center",
     paddingTop: 5,
     top: -5,
     marginHorizontal: 5,
     paddingHorizontal: 2,
   },
-  labelFooter:{
+  labelFooter: {
     fontFamily: "Archivo_700Bold",
     fontSize: 11,
     top: 2,
     paddingBottom: 5,
-    color: '#c1bccc',
+    color: "#c1bccc",
   },
-  labelFooterActive:{
+  labelFooterActive: {
     fontFamily: "Archivo_700Bold",
     fontSize: 11,
     top: 2,
     paddingBottom: 5,
-    color: '#32264d',
+    color: "#32264d",
+  },
+  icoEmpty: {
+    marginTop: 50,
+    alignItems: "center",
+    alignSelf: "center",
+    width: 150,
+    height: 150,
+  },
+  textIcon: {
+    marginTop: 20,
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+    textAlign: "center",
+    marginHorizontal: 20,
   },
 });
 

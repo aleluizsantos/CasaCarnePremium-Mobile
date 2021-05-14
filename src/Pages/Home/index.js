@@ -17,7 +17,6 @@ import AuthContext from "../../Contexts/auth";
 import RequestContext from "../../Contexts/requests";
 import ModalShow from "../../Components/ModalShow";
 import SERVER_URL from "../../Services/Server_URL";
-import { schedulePushNotification } from "../../Components/Notification";
 import styles from "./styles";
 
 const Home = () => {

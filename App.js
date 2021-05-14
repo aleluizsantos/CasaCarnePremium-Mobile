@@ -50,8 +50,8 @@ const App = () => {
         }
       } catch (error) {}
     }
-    registerForPushNotificationsAsync().then((tokenPush) =>
-      AsyncStorage.setItem("@Premium:tokenPushNotification", tokenPush)
+    registerForPushNotificationsAsync().then((response) =>
+      AsyncStorage.setItem("@Premium:tokenPushNotification", response)
     );
 
     const backgroundSubscription =

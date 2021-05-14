@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, Image } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -11,12 +11,15 @@ import api from "../../Services/api";
 import requests from "../../Contexts/requests";
 
 import styles from "./styles";
+import icoEmpty from "../../assets/empty.png";
+import { colors } from "../../Styles";
 
 const Menu = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { updateDB } = useContext(requests);
   const [dataProduct, setDataProduct] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { category } = route.params;
 
   useEffect(() => {
@@ -30,6 +33,7 @@ const Menu = () => {
         })
         .then((resp) => {
           setDataProduct(resp.data.products);
+          setIsLoading(false);
         });
     })();
   }, [updateDB]);
@@ -45,9 +49,20 @@ const Menu = () => {
 
       <ScrollView>
         <View style={styles.productContent}>
-          {dataProduct.map((item) => (
-            <ItemProduct key={item.id} itemProduct={item} />
-          ))}
+          {isLoading ? (
+            <ActivityIndicator size="large" color={colors.darker} />
+          ) : dataProduct.length <= 0 ? (
+            <View>
+              <Image style={styles.icoEmpty} source={icoEmpty} />
+              <Text style={styles.textIcon}>
+                Categoria sem produtos, em breve teremos novidade.
+              </Text>
+            </View>
+          ) : (
+            dataProduct.map((item) => (
+              <ItemProduct key={item.id} itemProduct={item} />
+            ))
+          )}
         </View>
       </ScrollView>
       <View style={styles.footer}>

@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
         if (refreshToken.refreshToken) {
           const token = refreshToken.token;
           AsyncStorage.setItem("@Premium:token", token);
+          signOut();
         }
 
         setUser(JSON.parse(storageUser));

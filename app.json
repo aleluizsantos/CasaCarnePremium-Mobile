@@ -2,7 +2,8 @@
   "expo": {
     "name": "Casa Premium",
     "slug": "CasaPremium",
-    "version": "1.2.0",
+    "sdkVersion": "39.0.0",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -31,7 +32,7 @@
       "package": "com.lesoftware.casacarnepremium",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": ["WRITE_SETTINGS", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
