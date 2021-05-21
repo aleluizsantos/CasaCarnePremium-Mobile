@@ -3,7 +3,7 @@
     "name": "Casa Premium",
     "slug": "CasaPremium",
     "sdkVersion": "39.0.0",
-    "version": "1.2.2",
+    "version": "1.2.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

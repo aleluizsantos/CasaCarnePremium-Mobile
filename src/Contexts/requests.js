@@ -1,5 +1,4 @@
 import React, { useState, useContext, createContext } from "react";
-import { Alert } from "react-native";
 import api from "../Services/api";
 import auth from "../Contexts/auth";
 
@@ -85,9 +84,14 @@ export const RequestProvider = ({ children }) => {
   async function addDeliveryType(id) {
     setDeliveryType(id);
     // Carregar o endereço da Loja
-    await api.get("addressStore").then((response) => {
-      setAddressStore(response.data);
-    });
+    await api
+      .get("addressStore")
+      .then((response) => {
+        setAddressStore(response.data);
+      })
+      .catch((err) => {
+        signOut();
+      });
   }
   // Finaliza o Carrinho de compra
   //------------------------------------------------------------------------

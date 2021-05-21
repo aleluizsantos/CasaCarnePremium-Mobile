@@ -1,10 +1,18 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { BorderlessButton } from "react-native-gesture-handler";
 
 import api from "../../Services/api";
 import Requests from "../../Contexts/requests";
+import Auth from "../../Contexts/auth";
 import Header from "../../Components/Header";
 import SubHeader from "../../Components/SubHeader";
 import ItemCar from "../../Components/ItemCar";
@@ -16,16 +24,32 @@ import styles from "./styles";
 //--------------------------------------------------------------------------------
 function Car() {
   const { itemCar, totalCar } = useContext(Requests);
+  const { signOut } = useContext(Auth);
   const [isloading, setIsLoading] = useState(true);
   const [taxaDelivery, setTaxaDelivery] = useState({ vMinTaxa: 0, taxa: 0 });
   const [vtaxaDelivery, setVtaxaDelivery] = useState(0);
 
   useEffect(() => {
     (async () => {
-      await api.get("/taxa").then((response) => {
-        setTaxaDelivery(response.data);
-        setIsLoading(false);
-      });
+      await api
+        .get("/taxa")
+        .then((response) => {
+          setTaxaDelivery(response.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          Alert.alert(
+            "Token expirou",
+            "Para continuar utilizando o aplicativo é necessário fazer novamento seu login.",
+            [
+              {
+                text: "OK",
+                onPress: () => signOut(),
+                style: "default",
+              },
+            ]
+          );
+        });
     })();
   }, []);
 

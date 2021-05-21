@@ -6,13 +6,11 @@ import ItemCategory from "../../Components/ItemCategory";
 import Promotion from "../../Components/Promotion";
 import SubHeader from "../../Components/SubHeader";
 import requests from "../../Contexts/requests";
-import auth from "../../Contexts/auth";
 import api from "../../Services/api";
 import styles from "./styles";
 
 const Category = () => {
   const { updateDB } = useContext(requests);
-  const { signOut } = useContext(auth);
   const [dataCategory, setDataCategory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 

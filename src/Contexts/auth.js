@@ -28,16 +28,11 @@ export const AuthProvider = ({ children }) => {
       // Verificar se existe já uma credencial salva
       if (storageUser && storageToken) {
         // Verificar se o token se expirou - caso True renovar token
-        const refreshToken = await (
-          await api.get(`/auth/checktoken/${storageToken}`)
-        ).data;
-
-        if (refreshToken.refreshToken) {
-          const token = refreshToken.token;
-          AsyncStorage.setItem("@Premium:token", token);
+        try {
+          await api.get(`/auth/checktoken/${storageToken}`);
+        } catch (error) {
           signOut();
         }
-
         setUser(JSON.parse(storageUser));
       }
       setLoading(false);

@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, ScrollView, ActivityIndicator, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  Image,
+  Alert,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -9,6 +16,7 @@ import Promotion from "../../Components/Promotion";
 import ItemProduct from "../../Components/ItemProduct";
 import api from "../../Services/api";
 import requests from "../../Contexts/requests";
+import auth from "../../Contexts/auth";
 
 import styles from "./styles";
 import icoEmpty from "../../assets/empty.png";
@@ -18,6 +26,7 @@ const Menu = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { updateDB } = useContext(requests);
+  const { signOut } = useContext(auth);
   const [dataProduct, setDataProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { category } = route.params;
@@ -25,16 +34,33 @@ const Menu = () => {
   useEffect(() => {
     (async () => {
       const catId = category.id;
-      await api
-        .get("product", {
-          params: {
-            category_id: catId,
-          },
-        })
-        .then((resp) => {
-          setDataProduct(resp.data.products);
-          setIsLoading(false);
-        });
+      try {
+        await api
+          .get("product", {
+            params: {
+              category_id: catId,
+            },
+          })
+          .then((resp) => {
+            setDataProduct(resp.data.products);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            Alert.alert(
+              "Token expirou",
+              "Para continuar utilizando o aplicativo é necessário fazer novamento seu login.",
+              [
+                {
+                  text: "OK",
+                  onPress: () => signOut(),
+                  style: "default",
+                },
+              ]
+            );
+          });
+      } catch (error) {
+        signOut();
+      }
     })();
   }, [updateDB]);
 

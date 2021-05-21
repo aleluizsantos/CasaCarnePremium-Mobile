@@ -34,9 +34,7 @@ const Home = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    (async () => {
-      checkOpenClose();
-    })();
+    checkOpenClose();
   }, []);
 
   useEffect(() => {

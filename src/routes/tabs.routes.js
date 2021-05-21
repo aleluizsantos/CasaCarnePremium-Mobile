@@ -19,10 +19,10 @@ function Tabs() {
         style: {
           elevation: 0,
           shadowOpacity: 0,
-          height: 55,
+          height: 60,
         },
         labelStyle: {
-          fontFamily: "Archivo_700Bold",
+          fontFamily: "Poppins_600SemiBold",
           fontSize: 11,
           paddingBottom: 5,
         },
@@ -50,9 +50,9 @@ function Tabs() {
           tabBarIcon: ({ color, size, focused }) => {
             return (
               <AntDesign
-                style={focused && { top: -4 }}
+                style={focused && { top: -1 }}
                 name="isv"
-                size={focused ? 30 : size}
+                size={focused ? 28 : size}
                 color={color}
               />
             );
@@ -67,9 +67,9 @@ function Tabs() {
           tabBarIcon: ({ color, size, focused }) => {
             return (
               <AntDesign
-                style={focused && { top: -4 }}
+                style={focused && { top: -1 }}
                 name="search1"
-                size={focused ? 30 : size}
+                size={focused ? 28 : size}
                 color={color}
               />
             );
@@ -85,8 +85,8 @@ function Tabs() {
             return (
               <AntDesign
                 name="tagso"
-                style={focused && { top: -4 }}
-                size={focused ? 30 : size}
+                style={focused && { top: -1 }}
+                size={focused ? 28 : size}
                 color={color}
               />
             );
@@ -102,8 +102,8 @@ function Tabs() {
             return (
               <AntDesign
                 name="setting"
-                style={focused && { top: -4 }}
-                size={focused ? 30 : size}
+                style={focused && { top: -1 }}
+                size={focused ? 28 : size}
                 color={color}
               />
             );
