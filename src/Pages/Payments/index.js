@@ -70,6 +70,7 @@ const Payments = () => {
       Promise.all([api.get("payment"), api.get("deliveryType")]).then(
         ([pay, deliv]) => {
           if (isCancelled) {
+            console.log(deliv.data);
             setDataPaymentType(pay.data);
             setDataDeliveryType(deliv.data);
             setIsLoading(false);

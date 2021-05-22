@@ -39,8 +39,8 @@ const App = () => {
     Poppins_600SemiBold,
   });
 
-  // Verificar atualização no aplicativo no expo
   useEffect(() => {
+    // Verificar atualização no aplicativo via expo
     async function updateApp() {
       try {
         const { isAvailable } = await Updates.checkForUpdateAsync();
@@ -50,9 +50,10 @@ const App = () => {
         }
       } catch (error) {}
     }
-    registerForPushNotificationsAsync().then((response) =>
-      AsyncStorage.setItem("@Premium:tokenPushNotification", response)
-    );
+    // Registrando usuário
+    registerForPushNotificationsAsync().then(async (tokenPush) => {
+      AsyncStorage.setItem("@Premium:tokenPushNotification", tokenPush);
+    });
 
     const backgroundSubscription =
       Notifications.addNotificationResponseReceivedListener((response) => {

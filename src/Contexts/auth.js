@@ -6,8 +6,8 @@ const AuthContextData = {
   signed: Boolean,
   loading: Boolean,
   message: String,
-  messageClean: Function,
   user: Object,
+  messageClean: Function,
   signIn: Function,
   signOut: Function,
 };
@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
       console.log(error.message);
     }
   }
+
   // Sair da aplicação.
   function signOut() {
     AsyncStorage.clear().then(() => {

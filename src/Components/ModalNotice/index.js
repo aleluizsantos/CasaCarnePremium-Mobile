@@ -59,11 +59,7 @@ const ModalNotice = ({ show, close }) => {
   };
 
   useEffect(() => {
-    if (show) {
-      openModal();
-    } else {
-      closeModal();
-    }
+    show ? openModal() : closeModal();
   }, [show]);
 
   return (

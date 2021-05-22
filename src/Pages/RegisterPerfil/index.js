@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -26,11 +26,26 @@ const RegisterPerfil = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [tokenPushNotification, setTokenPushNotification] = useState("");
   const [passwordConfirmed, setPasswordConfirmed] = useState("");
   const [isSecureText, setIsSecureText] = useState(true);
   const [validateInput, setValidateInput] = useState(false);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    let mounted = true;
+    getTokenPush();
+
+    return () => (mounted = false);
+  }, []);
+
+  async function getTokenPush() {
+    const storageTokenPush = await AsyncStorage.getItem(
+      "@Premium:tokenPushNotification"
+    );
+    setTokenPushNotification(storageTokenPush);
+  }
 
   function handleEve() {
     setIsSecureText(!isSecureText);
@@ -41,18 +56,22 @@ const RegisterPerfil = () => {
   }
 
   async function handleSubmit() {
-    if (!!name && !!email && !!phone && !!password && !!passwordConfirmed) {
+    if (
+      !!name &&
+      !!email &&
+      !!phone &&
+      !!password &&
+      !!passwordConfirmed &&
+      !!tokenPushNotification
+    ) {
       if (password === passwordConfirmed) {
-        const storageTokenPush = await AsyncStorage.getItem(
-          "@Premium:tokenPushNotification"
-        );
         await api
           .post("auth/register", {
             name,
             email,
             phone,
             password,
-            tokenPushNotification: storageTokenPush,
+            tokenPushNotification,
           })
           .then((response) => {
             Alert.alert("Cadastro", "Realizado com sucesso!");
