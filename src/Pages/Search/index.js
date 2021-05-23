@@ -31,8 +31,8 @@ const Search = () => {
   const [promotion, setPromotion] = useState("");
   const [pricePromotion, setPricePromotion] = useState("");
   const [price, setPrice] = useState("");
-  const [isBuy, SetIsBuy] = useState("");
-  const [isLoading, SetIsLoading] = useState(true);
+  const [isBuy, setIsBuy] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadProduct() {
@@ -42,7 +42,7 @@ const Search = () => {
       }
       if (search.length === 0) setDataProduct([]);
 
-      SetIsLoading(false);
+      setIsLoading(false);
     }
     loadProduct();
   }, [search]);
@@ -77,14 +77,14 @@ const Search = () => {
   }
   // Abrir modal para informar a quantidade do produto
   async function handleInformedModal(_item) {
-    const isBuyresp = await itemCar.find((item) => item.name === _item.name);
+    const isBuyresp = itemCar.find((item) => item.name === _item.name);
 
-    SetIsBuy(isBuyresp);
+    setIsBuy(isBuyresp);
 
     setProduct_id(_item.id);
     setName(_item.name);
     setImage_url(_item.image_url);
-    setMeasure(_item.measure);
+    setMeasure(_item.measureUnid);
     setPromotion(_item.promotion);
     setPricePromotion(_item.pricePromotion);
     setPrice(_item.price);
@@ -138,14 +138,20 @@ const Search = () => {
 
             <View style={styles.groupAmount}>
               <TouchableOpacity
-                onPress={() => setAmount(amount === 0 ? 0 : amount - 0.5)}
+                onPress={() =>
+                  setAmount(
+                    amount === 0 ? 0 : amount - (measure === "KG" ? 0.5 : 1)
+                  )
+                }
               >
                 <AntDesign name="minussquare" size={48} color={colors.darker} />
               </TouchableOpacity>
 
               <Text style={styles.textAmout}>{amount}</Text>
 
-              <TouchableOpacity onPress={() => setAmount(amount + 0.5)}>
+              <TouchableOpacity
+                onPress={() => setAmount(amount + (measure === "KG" ? 0.5 : 1))}
+              >
                 <AntDesign name="plussquare" size={48} color={colors.darker} />
               </TouchableOpacity>
             </View>

@@ -23,6 +23,12 @@ import { colors, formatMoney } from "../../Styles";
 import api from "../../Services/api";
 import ModalNotice from "../../Components/ModalNotice";
 
+const type = {
+  DELIVERY: 1,
+  RETIRAR_LOJA: 2,
+  AGENDADO: 3,
+};
+
 const Payments = () => {
   const {
     itemCar,
@@ -32,6 +38,7 @@ const Payments = () => {
     addDeliveryType,
     validationCoupom,
     totalCar,
+    openClose,
     checkout,
     addressStore,
   } = useContext(Requests);
@@ -60,9 +67,21 @@ const Payments = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [validateInput, setValidateInput] = useState(false);
   const [modal, setModal] = useState(false);
-  const [cash, setCash] = useState(0.0);
+  const [cash, setCash] = useState("");
 
   const { vTaxaDelivery } = route.params;
+
+  useEffect(() => {
+    let isCancelled = true;
+    if (isCancelled) {
+      (() => {
+        openClose
+          ? addDeliveryType(type.DELIVERY)
+          : addDeliveryType(type.AGENDADO);
+      })();
+    }
+    return () => (isCancelled = false);
+  }, [openClose]);
 
   useEffect(() => {
     let isCancelled = true;
@@ -70,39 +89,47 @@ const Payments = () => {
       Promise.all([api.get("payment"), api.get("deliveryType")]).then(
         ([pay, deliv]) => {
           if (isCancelled) {
-            console.log(deliv.data);
+            if (openClose) {
+              setDataDeliveryType(
+                deliv.data.filter((item) => item.id !== type.AGENDADO)
+              );
+            } else {
+              setDataDeliveryType(
+                deliv.data.filter((item) => item.id === type.AGENDADO)
+              );
+            }
+
             setDataPaymentType(pay.data);
-            setDataDeliveryType(deliv.data);
             setIsLoading(false);
           }
         }
       );
     }
     loadData();
-    return () => {
-      isCancelled = false;
-    };
-  }, []);
+    return () => (isCancelled = false);
+  }, [openClose]);
 
   useEffect(() => {
     let isCancelled = true;
     async function loadAddress() {
-      navigation.addListener("focus", () => setIsLoading(!isLoading));
+      if (isCancelled) {
+        navigation.addListener("focus", () => setIsLoading(!isLoading));
 
-      await api.get("address").then((addr) => {
-        setDataAddress(addr.data);
-        const activeAddr = addr.data.find((item) => !!item.active);
+        await api.get("address").then((addr) => {
+          setDataAddress(addr.data);
+          const activeAddr = addr.data.find((item) => !!item.active);
 
-        if (activeAddr !== undefined && isCancelled) {
-          setSelectAddress(activeAddr.address);
-          setSelectNumber(activeAddr.number);
-          setSelectNeighborhood(activeAddr.neighborhood);
-          setSelectCity(activeAddr.city);
-          setSelectUf(activeAddr.uf);
-          setPointReference(activeAddr.pointReference);
-        }
-        setIsLoading(false);
-      });
+          if (activeAddr !== undefined) {
+            setSelectAddress(activeAddr.address);
+            setSelectNumber(activeAddr.number);
+            setSelectNeighborhood(activeAddr.neighborhood);
+            setSelectCity(activeAddr.city);
+            setSelectUf(activeAddr.uf);
+            setPointReference(activeAddr.pointReference);
+          }
+          setIsLoading(false);
+        });
+      }
     }
     loadAddress();
     return () => {
@@ -190,6 +217,17 @@ const Payments = () => {
   }
 
   async function handleCkeckout() {
+    // Verificar se tipo de Entrega esta AGENDADO, caso estiver checar
+    // se o cliente definiu o agendamento
+    if (deliveryType === type.AGENDADO && !!!dateTimeScheduling) {
+      setValidateInput(true);
+      Alert.alert(
+        "Agendamento",
+        "Caro cliente, este tipo de entrega é necessário informar o agendamento."
+      );
+      return;
+    }
+
     // Verificar se todos campos necessário forma preenchidos
     if (!!deliveryType && !!paymentType.id) {
       // 1=DELIVERY | 2=RETIRAR NA LOJA
@@ -211,12 +249,9 @@ const Payments = () => {
         cash: cash,
       };
 
-      if (deliveryType === 1 && !!!selectAddress) {
+      if (deliveryType === type.DELIVERY && !!!selectAddress) {
         setValidateInput(true);
-        Alert.alert(
-          "Atenção",
-          "Faltando dado importante, verificar campo destacado."
-        );
+        Alert.alert("Falta de dados", "Verifique os campos destacados.");
       } else {
         setModal(!modal);
 
@@ -239,10 +274,7 @@ const Payments = () => {
       }
     } else {
       setValidateInput(true);
-      Alert.alert(
-        "Atenção",
-        "Faltando dado importante, verificar campo destacado."
-      );
+      Alert.alert("Falta de dados", "Verifique os campos destacados.");
     }
   }
 
@@ -282,17 +314,21 @@ const Payments = () => {
                     <Text style={styles.textDelivery}>
                       {itemDeliv.description}
                     </Text>
-                    <BorderlessButton
-                      onPress={() =>
-                        setshowModalDeliveryType(!showModalDeliveryType)
-                      }
-                    >
-                      <FontAwesome5
-                        name="ellipsis-h"
-                        size={24}
-                        color={colors.primary}
-                      />
-                    </BorderlessButton>
+                    {openClose ? (
+                      <BorderlessButton
+                        onPress={() =>
+                          setshowModalDeliveryType(!showModalDeliveryType)
+                        }
+                      >
+                        <FontAwesome5
+                          name="ellipsis-h"
+                          size={24}
+                          color={colors.primary}
+                        />
+                      </BorderlessButton>
+                    ) : (
+                      <Text style={styles.textAddress}>Loja Fechada</Text>
+                    )}
                   </View>
                 )
             )}
@@ -472,7 +508,7 @@ const Payments = () => {
                     <Text style={styles.contentThing}>Troco para</Text>
                     <View>
                       <TextInput
-                        style={[styles.input, { width: 150 }]}
+                        style={[styles.input, { width: 180 }]}
                         keyboardType="numeric"
                         placeholder="0.00"
                         value={cash}
@@ -506,9 +542,17 @@ const Payments = () => {
 
           {/* Agendamento */}
           <>
-            <View style={styles.titleItem}>
+            <View
+              style={[
+                styles.titleItem,
+                validateInput &&
+                  !!!dateTimeScheduling &&
+                  deliveryType === type.AGENDADO &&
+                  styles.validation,
+              ]}
+            >
               <Entypo name="calendar" size={24} color={colors.dark} />
-              <Text style={styles.labelItem}>Agendamentos</Text>
+              <Text style={styles.labelItem}>Agendamento</Text>
             </View>
             {!!dateSelected ? (
               <View style={styles.Scheduling}>

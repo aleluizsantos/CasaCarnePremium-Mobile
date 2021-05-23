@@ -109,7 +109,7 @@ const RegisterAddress = () => {
     setActive(_itemAddress.active);
     setPointReference(_itemAddress.pointReference);
 
-    setUpdateAddressId(_itemAddress.id); //Se possuir um id, indica que campo para editar
+    setUpdateAddressId(_itemAddress.id); //Se possuir um id, indica campos para editar
     setUpdateAddressUserId(_itemAddress.user_id);
     setValidateInput(false);
 
@@ -326,7 +326,7 @@ const RegisterAddress = () => {
                 <View style={styles.containerButtonAdd}>
                   <TouchableOpacity
                     style={styles.buttonRegister}
-                    onPress={handleSubmit}
+                    onPress={() => handleSubmit()}
                   >
                     <Text style={styles.titleButtonRegister}>Salvar</Text>
                   </TouchableOpacity>

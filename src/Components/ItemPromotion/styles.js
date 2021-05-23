@@ -23,11 +23,11 @@ const styles = StyleSheet.create({
   },
   titleItemPromotion: {
     position: "absolute",
-    top: 50,
+    top: 55,
     backgroundColor: "#2A2823",
     color: colors.white,
     paddingHorizontal: 10,
-    fontSize: fonts.smaller,
+    fontSize: 8,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
@@ -45,113 +45,113 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-},
-textInformedAmount: {
-    fontFamily: 'Archivo_700Bold',
+  },
+  textInformedAmount: {
+    fontFamily: "Archivo_700Bold",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 10,
-},
-textModalProduct: {
+  },
+  textModalProduct: {
     fontSize: fonts.bigger,
-},
-groupText:{
-    flexDirection: 'row',
-    alignItems: 'center',
-},
-textValuePromotion:{
+  },
+  groupText: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textValuePromotion: {
     fontSize: fonts.big,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.red,
-},
-modalView: {
+  },
+  modalView: {
     margin: 8,
-    width: '85%',
+    width: "85%",
     backgroundColor: colors.white,
     borderRadius: 20,
     padding: 15,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
-        width: 0,
-        height: 2
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
-},
-groupAmount: {
-    flexDirection: 'row',
+    elevation: 5,
+  },
+  groupAmount: {
+    flexDirection: "row",
     paddingVertical: 15,
-    alignItems: 'center',
-},
-textAmout: {
+    alignItems: "center",
+  },
+  textAmout: {
     fontSize: 35,
     paddingHorizontal: 45,
-},
-textAlertProductCarts: {
-    fontFamily: 'Archivo_400Regular',
+  },
+  textAlertProductCarts: {
+    fontFamily: "Archivo_400Regular",
     fontSize: 16,
     paddingBottom: 20,
     color: colors.red,
     textAlign: "center",
     lineHeight: 20,
-},
-textAlert:{
+  },
+  textAlert: {
     fontFamily: "Poppins_400Regular",
     fontSize: 12,
     textAlign: "center",
     color: colors.darker,
-},
-containerButtonAdd: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  },
+  containerButtonAdd: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     borderTopWidth: 2,
     borderTopColor: colors.lighter,
-    width: '100%',
-},
-buttonComprar: {
+    width: "100%",
+  },
+  buttonComprar: {
     backgroundColor: colors.primary,
     height: 50,
     width: 130,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
     borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: {
-        width: 0,
-        height: 2
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
-},
-titleButtonComprar: {
-    fontFamily: 'Archivo_700Bold',
+    elevation: 5,
+  },
+  titleButtonComprar: {
+    fontFamily: "Archivo_700Bold",
     color: colors.darker,
-},
-buttonCancel: {
+  },
+  buttonCancel: {
     backgroundColor: colors.light,
     height: 50,
     width: 130,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
     borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: {
-        width: 0,
-        height: 2
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
-},
-titleButtonCancel: {
-    fontFamily: 'Archivo_700Bold',
+    elevation: 5,
+  },
+  titleButtonCancel: {
+    fontFamily: "Archivo_700Bold",
     color: colors.darker,
-},
+  },
 });
 
 export default styles;

@@ -40,7 +40,9 @@ const Styles = StyleSheet.create({
   fieldGroup: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingBottom: 20,
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.light,
   },
   label: {
     fontFamily: "Archivo_400Regular",

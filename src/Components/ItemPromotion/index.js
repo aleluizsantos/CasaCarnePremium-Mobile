@@ -72,14 +72,27 @@ const ItemPromotion = ({ productPromotion }) => {
 
             <View style={styles.groupAmount}>
               <TouchableOpacity
-                onPress={() => setAmount(amount === 0 ? 0 : amount - 0.5)}
+                onPress={() =>
+                  setAmount(
+                    amount === 0
+                      ? 0
+                      : amount -
+                          (productPromotion.measureUnid === "KG" ? 0.5 : 1)
+                  )
+                }
               >
                 <AntDesign name="minussquare" size={48} color={colors.darker} />
               </TouchableOpacity>
 
               <Text style={styles.textAmout}>{amount}</Text>
 
-              <TouchableOpacity onPress={() => setAmount(amount + 0.5)}>
+              <TouchableOpacity
+                onPress={() =>
+                  setAmount(
+                    amount + (productPromotion.measureUnid === "KG" ? 0.5 : 1)
+                  )
+                }
+              >
                 <AntDesign name="plussquare" size={48} color={colors.darker} />
               </TouchableOpacity>
             </View>
@@ -119,7 +132,9 @@ const ItemPromotion = ({ productPromotion }) => {
               uri: productPromotion.image_url,
             }}
           />
-          <Text style={styles.titleItemPromotion}>{productPromotion.name}</Text>
+          <Text style={styles.titleItemPromotion}>
+            {productPromotion.name.substring(0, 10)}
+          </Text>
           <Text style={styles.priceItemPromotion}>
             {formatMoney(productPromotion.pricePromotion)}
           </Text>

@@ -115,7 +115,7 @@ export const RequestProvider = ({ children }) => {
   async function updateAmountCart(_itemCar, _oldAmount, _newAmount) {
     const price = _itemCar.promotion ? _itemCar.pricePromotion : _itemCar.price;
 
-    const newItemCar = await itemCar.map((item) => {
+    const newItemCar = itemCar.map((item) => {
       if (item.product_id === _itemCar.id) {
         item.amount = _newAmount;
 
@@ -137,10 +137,11 @@ export const RequestProvider = ({ children }) => {
   //------------------------------------------------------------------------
   async function upAmountProduct(_itemCar) {
     //Acrescentando meio kilo na quantidade
-    const amount = _itemCar.amount + 0.5;
+    const amount = _itemCar.amount + (_itemCar.measure === "KG" ? 0.5 : 1);
     // Valor acrescentado do meio quilo
     const valueAmount =
-      (_itemCar.promotion ? _itemCar.pricePromotion : _itemCar.price) * 0.5;
+      (_itemCar.promotion ? _itemCar.pricePromotion : _itemCar.price) *
+      (_itemCar.measure === "KG" ? 0.5 : 1);
     // Atualizar a quantidade do produto no carrinho
     const newItemCar = await itemCar.map((item) => {
       if (item.product_id === _itemCar.product_id) {
@@ -156,7 +157,7 @@ export const RequestProvider = ({ children }) => {
   //------------------------------------------------------------------------
   async function downAmountProduct(_itemCar) {
     //Acrescentando meio kilo na quantidade
-    const amount = _itemCar.amount - 0.5;
+    const amount = _itemCar.amount - (_itemCar.measure === "KG" ? 0.5 : 1);
     // Verificar se a quantidade é igual a zero, se for igual a 0
     // excluir o produto do carrinho
     if (amount < 0) {
@@ -165,7 +166,8 @@ export const RequestProvider = ({ children }) => {
     }
     // Valor acrescentado do meio quilo
     const valueAmount =
-      (_itemCar.promotion ? _itemCar.pricePromotion : _itemCar.price) * 0.5;
+      (_itemCar.promotion ? _itemCar.pricePromotion : _itemCar.price) *
+      (_itemCar.measure === "KG" ? 0.5 : 1);
     // Percorrer o array Carinho e verificar se existe o item para alterar quantidade
     const newItemCar = await itemCar.map((item) => {
       if (item.product_id === _itemCar.product_id) {

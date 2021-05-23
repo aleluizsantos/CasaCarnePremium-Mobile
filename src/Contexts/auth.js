@@ -10,6 +10,8 @@ const AuthContextData = {
   messageClean: Function,
   signIn: Function,
   signOut: Function,
+  userChanger: Function,
+  passwordChange: Function,
 };
 
 const AuthContext = createContext(AuthContextData);
@@ -67,14 +69,48 @@ export const AuthProvider = ({ children }) => {
   }
 
   // Sair da aplicação.
-  function signOut() {
-    AsyncStorage.clear().then(() => {
+  async function signOut() {
+    await AsyncStorage.clear().then(() => {
       setUser(null);
     });
   }
   //clean Message
   function messageClean() {
     setMessage("");
+  }
+  /**
+   * Alterar os dados do usuários
+   * @param {Objeto} user Recebe um objeto com os dados name, email e phone
+   */
+  async function userChanger(dataUser) {
+    const userId = user.id;
+    const upgradeUser = await (
+      await api.put(`/auth/users/${userId}`, dataUser)
+    ).data;
+
+    if (upgradeUser.success) {
+      const newDataUser = {
+        ...user,
+        name: dataUser.name,
+        email: dataUser.email,
+        phone: dataUser.phone,
+      };
+      setUser(newDataUser);
+
+      AsyncStorage.setItem("@Premium:User", JSON.stringify(newDataUser));
+    }
+
+    return upgradeUser;
+  }
+
+  async function passwordChange(dataPassword) {
+    const userId = user.id;
+
+    const upgradePass = await (
+      await api.put(`/auth/password/${userId}`, dataPassword)
+    ).data;
+
+    return upgradePass;
   }
 
   return (
@@ -87,6 +123,8 @@ export const AuthProvider = ({ children }) => {
         messageClean,
         signIn,
         signOut,
+        userChanger,
+        passwordChange,
       }}
     >
       {children}

@@ -7,20 +7,26 @@ import {
   Modal,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { TabRouter, useNavigation } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
 
 import Auth from "../../Contexts/auth";
 import styles from "./styles";
 
 function Perfil() {
-  const { user } = useContext(Auth);
-  const [modalVisible, setModalVisible] = useState(false);
+  const { user, userChanger, passwordChange } = useContext(Auth);
+  const [modalEditUser, setModalEditUser] = useState(false);
+  const [modalPasswordChange, setModalPasswordChange] = useState(false);
   const [validateInput, setValidateInput] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [passwordOld, setPasswordOld] = useState("");
+  const [passwordNew, setPasswordNew] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -34,9 +40,62 @@ function Perfil() {
     navigation.goBack();
   }
 
+  async function handleUserChange() {
+    const dataUser = {
+      name,
+      email,
+      phone,
+    };
+    setIsLoading(true);
+    userChanger(dataUser).then((response) => {
+      setIsLoading(false);
+      response.success
+        ? setModalEditUser(!modalEditUser)
+        : Alert.alert("Erro", response.error);
+    });
+  }
+
+  function cleanFieldPassChanger() {
+    setPasswordNew("");
+    setPasswordOld("");
+    setPasswordConfirm("");
+    setModalPasswordChange(false);
+  }
+
+  async function handleUserChangePassword() {
+    const dataPassChange = {
+      oldPassword: passwordOld,
+      newPassword: passwordNew,
+    };
+    if (
+      passwordNew === passwordConfirm &&
+      passwordNew !== "" &&
+      passwordOld !== ""
+    ) {
+      passwordChange(dataPassChange).then((response) => {
+        if (response.success) {
+          cleanFieldPassChanger();
+        } else {
+          Alert.alert("Erro", response.error);
+          passOldInput.focus();
+          setPasswordOld("");
+        }
+      });
+    } else {
+      setPasswordNew("");
+      setPasswordConfirm("");
+      passNewInput.focus();
+      Alert.alert(
+        "Senha não confere",
+        "A senha digitada não são identicadas, tente novamente."
+      );
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <Modal animationType="fade" transparent={false} visible={modalVisible}>
+      {/* MODAL EDITAR USUÁRIO */}
+      <Modal animationType="fade" transparent={false} visible={modalEditUser}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.title}>Editar Perfil</Text>
@@ -91,17 +150,102 @@ function Perfil() {
               <View style={styles.containerButtonAdd}>
                 <TouchableOpacity
                   style={styles.buttonUpDatePerfil}
-                  onPress={() => {}}
+                  disabled={isLoading}
+                  onPress={handleUserChange}
                 >
-                  <Text style={styles.titleButtonRegister}>Salvar</Text>
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.titleButtonRegister}>Salvar</Text>
+                  )}
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonCancelModal}
                   onPress={() => {
-                    setModalVisible(!modalVisible);
+                    setModalEditUser(!modalEditUser);
                   }}
                 >
                   <Text style={styles.titleButtonCancel}>Voltar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* MODAL ALTERAR SENHA */}
+      <Modal
+        animationType="fade"
+        transparent={false}
+        visible={modalPasswordChange}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.title}>Alterar senha</Text>
+            <View style={styles.form}>
+              <View>
+                <TextInput
+                  ref={(input) => (passOldInput = input)}
+                  style={styles.input}
+                  placeholder="Senha antiga"
+                  secureTextEntry={true}
+                  autoFocus={true}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="default"
+                  value={passwordOld}
+                  onChangeText={setPasswordOld}
+                  onSubmitEditing={() => passNewInput.focus()}
+                  blurOnSubmit={false}
+                  returnKeyType="next"
+                />
+              </View>
+              <View>
+                <TextInput
+                  ref={(input) => (passNewInput = input)}
+                  style={styles.input}
+                  placeholder="Nova senha"
+                  secureTextEntry={true}
+                  autoCapitalize="none"
+                  keyboardType="default"
+                  value={passwordNew}
+                  onChangeText={setPasswordNew}
+                  onSubmitEditing={() => passCheckInput.focus()}
+                  blurOnSubmit={false}
+                  returnKeyType="next"
+                />
+              </View>
+              <View>
+                <TextInput
+                  ref={(input) => (passCheckInput = input)}
+                  style={styles.input}
+                  secureTextEntry={true}
+                  placeholder="Confirmar senha"
+                  keyboardType="default"
+                  value={passwordConfirm}
+                  onChangeText={setPasswordConfirm}
+                  returnKeyType="go"
+                />
+              </View>
+
+              <View style={styles.containerButtonAdd}>
+                <TouchableOpacity
+                  style={styles.buttonCancelModal}
+                  onPress={() => {
+                    setModalPasswordChange(!modalPasswordChange);
+                  }}
+                >
+                  <Text style={styles.titleButtonCancel}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonUpDatePerfil}
+                  disabled={isLoading}
+                  onPress={handleUserChangePassword}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.titleButtonRegister}>Alterar</Text>
+                  )}
                 </TouchableOpacity>
               </View>
             </View>
@@ -122,7 +266,6 @@ function Perfil() {
                     />
                 </TouchableOpacity> */}
       </View>
-
       <Text style={styles.titleUser}>{user.name.split(" ")[0]}</Text>
 
       <View style={styles.dataUser}>
@@ -142,14 +285,18 @@ function Perfil() {
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Senha</Text>
-          <Text style={styles.value}>********</Text>
+          <TouchableOpacity
+            onPress={() => setModalPasswordChange(!modalPasswordChange)}
+          >
+            <Text style={styles.value}>********</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.groupButton}>
         <TouchableOpacity
           style={styles.buttonEditPerfil}
-          onPress={() => setModalVisible(!modalVisible)}
+          onPress={() => setModalEditUser(!modalEditUser)}
         >
           <Text>Editar Perfil</Text>
         </TouchableOpacity>
