@@ -3,7 +3,7 @@
     "name": "Casa Premium",
     "slug": "CasaPremium",
     "sdkVersion": "39.0.0",
-    "version": "1.2.4",
+    "version": "1.2.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lesoftware.casacarnepremium",
-      "buildNumber": "1.2"
+      "buildNumber": "1.3"
     },
     "notification": { 
       "icon": "./assets/iconNotification.png", 
@@ -32,7 +32,7 @@
       "package": "com.lesoftware.casacarnepremium",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "versionCode": 3,
+      "versionCode": 4,
       "permissions": ["WRITE_SETTINGS", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

@@ -21,7 +21,7 @@ function MyOrderDetails() {
       await api
         .get("request/items", { headers: { request_id: request.id } })
         .then((response) => {
-          setDataItemRequest(response.data);
+          setDataItemRequest(response.data.itemsRequest);
         });
     }
     loadingItemRequest();

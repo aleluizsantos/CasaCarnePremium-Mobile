@@ -51,7 +51,7 @@ const Home = () => {
         updateStatusOpenClose(response.open_close);
       });
       socket.on("Update", (response) => {
-        updateBDsytem(response.update);
+        updateBDsytem(response.timeStamp);
       });
     })();
   }, []);
