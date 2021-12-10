@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
   buttonSignIn: {
     backgroundColor: colors.primary,
     flexDirection: "row",
-    height: 50,
-    width: "48%",
+    height: 60,
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 8,
@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
   },
   titleButtonSignIn: {
     fontFamily: "Archivo_700Bold",
-    color: "#4E1A15",
+    color: colors.white,
+    textTransform: "uppercase",
   },
   buttonRegister: {
     backgroundColor: colors.light,

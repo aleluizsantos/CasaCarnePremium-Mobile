@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "Casa Premium",
-    "slug": "CasaPremium",
-    "sdkVersion": "39.0.0",
-    "version": "1.2.6",
+    "name": "Carne Premium",
+    "slug": "CarnePremium",
+    "version": "1.5.0",
+    "description": "Aplicativo conectando você a melhor açougue da cidade.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#FFFFFF"
+      "backgroundColor": "#000000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -20,27 +20,32 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lesoftware.casacarnepremium",
-      "buildNumber": "1.3"
+      "buildNumber": "5"
     },
-    "notification": { 
-      "icon": "./assets/iconNotification.png", 
-      "color": "#FCB44A", 
-      "androidMode": "default", 
-      "androidCollapsedTitle": "Casa Carne Premium" 
-    }, 
+    "notification": {
+      "icon": "./assets/iconNotification.png",
+      "color": "#94272d",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Casa Carne Premium"
+    },
     "android": {
       "package": "com.lesoftware.casacarnepremium",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "versionCode": 4,
-      "permissions": ["WRITE_SETTINGS", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+      "versionCode": 5,
+      "permissions": [
+        "WRITE_SETTINGS",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#94272d"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "githubUrl": "https://github.com/aleluizsantos/CasaCarnePremium-Mobile"
   }
 }

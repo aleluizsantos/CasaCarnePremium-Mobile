@@ -13,14 +13,14 @@ function ForgotPassword() {
 
   function handleForgotPassword() {
     if (!!email) {
-      navigation.navigate("Login");
+      navigation.navigate("Login", { page: "Category" });
     } else {
       setValidateInput(true);
     }
   }
 
   function handleGoToLogin() {
-    navigation.navigate("Login");
+    navigation.navigate("Login", { page: "Category" });
   }
 
   return (

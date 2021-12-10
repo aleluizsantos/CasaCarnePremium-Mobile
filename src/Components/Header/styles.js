@@ -16,10 +16,6 @@ const styles = StyleSheet.create({
   user: {
     paddingHorizontal: 10,
   },
-  titleUser: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: fonts.small,
-  },
   button: {
     alignContent: "flex-end",
   },
@@ -29,6 +25,14 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: colors.primary,
+  },
+  nameUser: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: fonts.small,
+    lineHeight: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    color: colors.dark,
   },
   title: {
     fontFamily: "Archivo_700Bold",
@@ -42,13 +46,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  car:{
+  car: {
     padding: 12,
   },
   indicateCar: {
     position: "absolute",
-    right: 8,
+    right: 5,
     top: 10,
+  },
+  titleClose: {
+    fontFamily: "Archivo_700Bold",
+    fontSize: fonts.small,
+    color: colors.red,
+    textTransform: "capitalize",
+    padding: 8,
+    borderRadius: 8,
   },
 });
 

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   ScrollView,
   TouchableOpacity,
@@ -20,39 +21,44 @@ import styles from "./styles";
 import { colors } from "../../Styles";
 
 const SignIn = () => {
-  const { signIn, message, messageClean } = useContext(AuthContext);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { signIn } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSecureText, setIsSecureText] = useState(true);
   const [validateInput, setValidateInput] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const navigation = useNavigation();
+  const [exponentPushToken, setExponentPushToken] = useState("");
 
   useEffect(() => {
-    !!message && setModalVisible(!modalVisible);
-    setIsLoading(false);
-    clearMessageError();
-  }, [message]);
+    (async () => {
+      const pushToken = await AsyncStorage.getItem(
+        "@CasaCarnePremium:tokenPushNotification"
+      );
+      setExponentPushToken(pushToken);
+    })();
+  }, []);
 
-  function clearMessageError() {
-    setTimeout(() => messageClean(), 30000);
-  }
-
-  function handleSignId() {
+  async function handleSignId() {
     if (!isLoading) {
       if (!!email && !!password) {
         setIsLoading(true);
-        signIn(email, password);
+        signIn(email, password, exponentPushToken).then((resp) => {
+          if (resp.error) {
+            setMessage(resp.error);
+          } else {
+            route.params?.page
+              ? navigation.navigate(route.params?.page)
+              : navigation.navigate("App", { screen: "Category" });
+          }
+          setIsLoading(false);
+        });
       } else {
         setValidateInput(true);
       }
     }
-  }
-
-  function handleRegisterPerfil() {
-    navigation.navigate("RegisterPerfil");
   }
 
   function handleEve() {
@@ -69,7 +75,7 @@ const SignIn = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : null}
     >
-      <Header />
+      <Header goBack={true} />
       <ScrollView>
         <View style={styles.body}>
           <Text style={styles.titleBody}>
@@ -81,7 +87,9 @@ const SignIn = () => {
           </Text>
 
           <View style={styles.form}>
-            {!!message && <Text style={styles.messageError}>{message}</Text>}
+            {Boolean(message) && (
+              <Text style={styles.messageError}>{message}</Text>
+            )}
             <View>
               <View style={styles.Touchable}>
                 <MaterialIcons
@@ -134,12 +142,6 @@ const SignIn = () => {
           </View>
 
           <View style={styles.groupButton}>
-            <TouchableOpacity
-              style={styles.buttonRegister}
-              onPress={handleRegisterPerfil}
-            >
-              <Text style={styles.titleRegister}>Registrar</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonSignIn}
               onPress={handleSignId}

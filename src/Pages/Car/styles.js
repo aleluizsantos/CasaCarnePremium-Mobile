@@ -2,43 +2,34 @@ import { StyleSheet } from "react-native";
 import Constants from "expo-constants";
 
 import { colors, fonts } from "../../Styles";
-import { FontAwesome } from "@expo/vector-icons";
 
 const Styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: Constants.statusBarHeight,
+    backgroundColor: colors.white,
   },
   totalContent: {
-    backgroundColor: '#FFF2DE',
+    backgroundColor: "#FFF2DE",
     padding: 10,
-    shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
   },
-  containtImage:{
-    height: '100%',
+  containtImage: {
+    flex: 1,
     alignItems: "center",
-    marginTop: 100,   
+    justifyContent: "center",
   },
-  textNotItemCart:{
-    fontFamily: 'Archivo_400Regular',
-    fontSize: fonts.small,
+  textNotItemCart: {
+    fontFamily: "Poppins_600SemiBold",
+    textAlign: "center",
   },
-  imgCartEmpty:{
-    width: 150,
-    height: 150,
-    resizeMode: 'contain',
-    marginBottom: 25,
+  imgCartEmpty: {
+    resizeMode: "contain",
+    width: 250,
+    height: 200,
   },
   fieldGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   buttonConfirm: {
@@ -50,22 +41,60 @@ const Styles = StyleSheet.create({
     marginVertical: 10,
   },
   textButtonConfirm: {
-    fontFamily: 'Archivo_700Bold',
+    fontFamily: "Archivo_700Bold",
     fontSize: fonts.big,
-    color: colors.darker,
+    color: colors.white,
   },
-  labelTotal:{
-    fontFamily: 'Archivo_700Bold',
+  labelTotal: {
+    fontFamily: "Archivo_700Bold",
     fontSize: fonts.big,
   },
   taxaDelivery: {
-    fontFamily: 'Archivo_400Regular',
+    fontFamily: "Archivo_400Regular",
     fontSize: fonts.small,
   },
   total: {
-    fontFamily: 'Archivo_700Bold',
+    fontFamily: "Archivo_700Bold",
     fontSize: fonts.big,
-  }
+  },
+  footerButtom: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    width: "100%",
+  },
+  button: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    width: "80%",
+    height: 50,
+    paddingTop: 4,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  buttonOutline: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.regular,
+    width: "80%",
+    height: 50,
+    paddingTop: 4,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  textButton: {
+    fontFamily: "Poppins_400Regular",
+    color: colors.white,
+  },
+  titleModal: {
+    fontFamily: "Archivo_700Bold",
+    fontSize: fonts.big,
+    marginTop: 40,
+  },
 });
 
 export default Styles;

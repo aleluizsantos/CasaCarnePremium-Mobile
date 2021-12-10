@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInputMask } from "react-native-masked-text"; //https://github.com/benhurott/react-native-masked-text
+import * as Yup from "yup";
 
 import {
   Text,
@@ -14,87 +15,155 @@ import {
   Keyboard,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 
+import auth from "../../Contexts/auth";
 import Header from "../../Components/Header";
 import api from "../../Services/api";
 
 import styles from "./styles";
+import { colors } from "../../Styles";
+
+const schema = Yup.object().shape({
+  name: Yup.string()
+    .required({ name: "Nome obrigatório" })
+    .min(3, { name: "O nome deve ter no mímino 3 caracteres!" })
+    .max(80, { name: "O nome deve ter no mímino 80 caracteres!" }),
+
+  email: Yup.string()
+    .email({ email: "E-mail inválido!" })
+    .required({ email: "E-mail Obrigatório" }),
+  phone: Yup.string()
+    .min(15, { phone: "Telefone tem no mínimo 15 digitos" })
+    .required({ phone: "Número telefone obrigatório" }),
+  password: Yup.string()
+    .required("Senha obrigatória")
+    .min(6, { password: "Senha deve conter no mínimo 6 caracteres" }),
+  confirmPassword: Yup.string().when("password", (password, field) =>
+    password
+      ? field
+          .required({ confirmPassword: "confirmação obrigatório" })
+          .oneOf([Yup.ref("password")], {
+            confirmPassword: "Senha não confere",
+          })
+      : field
+  ),
+});
 
 const RegisterPerfil = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [tokenPushNotification, setTokenPushNotification] = useState("");
-  const [passwordConfirmed, setPasswordConfirmed] = useState("");
-  const [isSecureText, setIsSecureText] = useState(true);
-  const [validateInput, setValidateInput] = useState(false);
-
   const navigation = useNavigation();
+  const { signIn } = useContext(auth);
+  const [tokenPushNotification, setTokenPushNotification] = useState("");
+  const [isSecureText, setIsSecureText] = useState(true);
+  const [isloading, setIsloading] = useState(false);
+  const [formState, setFormState] = useState({
+    isValid: false,
+    values: {},
+    touched: {},
+    errors: {},
+  });
 
   useEffect(() => {
     let mounted = true;
-    getTokenPush();
-
+    mounted && getTokenPush();
     return () => (mounted = false);
   }, []);
 
+  const hasError = (field) =>
+    formState.touched[field] && formState.errors[field] ? true : false;
+
+  const hasMessageError = (field) =>
+    formState.errors[field] ? formState.errors[field] : "";
+
   async function getTokenPush() {
     const storageTokenPush = await AsyncStorage.getItem(
-      "@Premium:tokenPushNotification"
+      "@CasaCarnePremium:tokenPushNotification"
     );
     setTokenPushNotification(storageTokenPush);
   }
-
   function handleEve() {
     setIsSecureText(!isSecureText);
   }
-
-  function handleGotoLogin() {
-    navigation.navigate("Login");
+  function handleGotGoToBack() {
+    navigation.goBack();
   }
-
   async function handleSubmit() {
-    if (
-      !!name &&
-      !!email &&
-      !!phone &&
-      !!password &&
-      !!passwordConfirmed &&
-      !!tokenPushNotification
-    ) {
-      if (password === passwordConfirmed) {
-        await api
-          .post("auth/register", {
-            name,
-            email,
-            phone,
-            password,
-            tokenPushNotification,
-          })
-          .then((response) => {
-            Alert.alert("Cadastro", "Realizado com sucesso!");
-            navigation.navigate("Login");
-          })
-          .catch(function (error) {
-            if (error.response) {
-              Alert.alert("Erro", "E-mail já cadastrado");
-            } else if (error.request) {
-              console.log(error.request);
-            } else {
-              console.log("Error", error.message);
-            }
-          });
-      } else {
-        Alert.alert("Atenção", "Sua senha não confere");
-        setPassword("");
-        setPasswordConfirmed("");
-        setValidateInput(true);
-      }
-    } else {
-      setValidateInput(true);
+    if (formState.isValid) {
+      setIsloading(true);
+      const data = {
+        ...formState.values,
+        tokenPushNotification,
+      };
+
+      await api
+        .post("auth/register", data)
+        .then(() => {
+          setIsloading(false);
+          signIn(formState.values.email, formState.values.password);
+          Alert.alert(
+            "Sucesso",
+            "Agora você deve informar o endereço de entrega!",
+            [
+              {
+                text: "Informar endereço",
+                onPress: () =>
+                  navigation.navigate("RegisterAddress", { active: true }),
+              },
+            ]
+          );
+        })
+        .catch(function (error) {
+          if (error.response) {
+            setIsloading(false);
+            Alert.alert(
+              "Desculpe",
+              `O e-mail: '${formState.values.email}' já está cadastrado`
+            );
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log("Error", error.message);
+          }
+        });
     }
+  }
+  async function handleChange(ref, value) {
+    setFormState({
+      ...formState,
+      values: {
+        ...formState.values,
+        [ref]: value,
+      },
+      touched: {
+        ...formState.touched,
+        [ref]: true,
+      },
+    });
+  }
+  async function handleValidation() {
+    let result = {};
+
+    schema
+      .validate(formState.values, { abortEarly: false })
+      .then(() => {
+        setFormState({
+          ...formState,
+          isValid: true,
+          errors: result,
+        });
+      })
+      .catch(function (err) {
+        err.errors.forEach((item) => {
+          const key = Object.keys(item);
+          result[key] = item[key];
+        });
+        setFormState({
+          ...formState,
+          isValid: false,
+          errors: result,
+        });
+      });
   }
 
   return (
@@ -108,9 +177,10 @@ const RegisterPerfil = () => {
         <View style={styles.body}>
           <Text style={styles.titleBody}>Perfil</Text>
           <Text style={styles.titleDescription}>
-            Para iniciarmos o nosso aplicativo é necessário algumas informações,
-            por gentileza preencha os campos abaixo.
+            Para finalizar seu pedido é necessário algumas informações, por
+            gentileza preencha os campos abaixo.
           </Text>
+
           <View style={styles.form}>
             <View>
               <View style={styles.Touchable}>
@@ -122,21 +192,25 @@ const RegisterPerfil = () => {
                 />
               </View>
               <TextInput
-                style={[
-                  styles.input,
-                  validateInput && !!!name && styles.validate,
-                ]}
+                ref={(input) => {
+                  nameInput = input;
+                }}
+                style={[styles.input, hasError("name") && styles.validate]}
                 keyboardType="default"
                 placeholder="Seu nome"
                 autoCorrect={false}
-                value={name}
-                onChangeText={setName}
+                value={formState.values["name"] || ""}
+                onChangeText={(value) => handleChange("name", value)}
                 returnKeyType="next"
                 onSubmitEditing={() => {
                   emailInput.focus();
                 }}
                 blurOnSubmit={false}
+                onBlur={handleValidation}
               />
+              {hasError("name") && (
+                <Text style={styles.error}>{hasMessageError("name")}</Text>
+              )}
             </View>
             <View>
               <View style={styles.Touchable}>
@@ -151,22 +225,23 @@ const RegisterPerfil = () => {
                 ref={(input) => {
                   emailInput = input;
                 }}
-                style={[
-                  styles.input,
-                  validateInput && !!!email && styles.validate,
-                ]}
+                style={[styles.input, hasError("email") && styles.validate]}
                 keyboardType="email-address"
                 placeholder="Seu e-mail"
                 autoCapitalize="none"
                 autoCorrect={false}
-                value={email}
-                onChangeText={setEmail}
+                value={formState.values["email"] || ""}
+                onChangeText={(value) => handleChange("email", value)}
                 returnKeyType="next"
                 onSubmitEditing={() => {
                   phoneInput.focus();
                 }}
                 blurOnSubmit={false}
+                onBlur={handleValidation}
               />
+              {hasError("email") && (
+                <Text style={styles.error}>{hasMessageError("email")}</Text>
+              )}
             </View>
             <View>
               <View style={styles.Touchable}>
@@ -181,10 +256,7 @@ const RegisterPerfil = () => {
                 refInput={(input) => {
                   phoneInput = input;
                 }}
-                style={[
-                  styles.input,
-                  validateInput && !!!phone && styles.validate,
-                ]}
+                style={[styles.input, hasError("phone") && styles.validate]}
                 placeholder="Seu telefone"
                 type={"cel-phone"}
                 options={{
@@ -192,14 +264,18 @@ const RegisterPerfil = () => {
                   withDDD: true,
                   dddMask: "(99) ",
                 }}
-                value={phone}
-                onChangeText={setPhone}
+                value={formState.values["phone"] || ""}
+                onChangeText={(value) => handleChange("phone", value)}
                 returnKeyType="next"
                 onSubmitEditing={() => {
                   passwordInput.focus();
                 }}
                 blurOnSubmit={false}
+                onBlur={handleValidation}
               />
+              {hasError("phone") && (
+                <Text style={styles.error}>{hasMessageError("phone")}</Text>
+              )}
             </View>
             <View>
               <View style={styles.Touchable}>
@@ -216,22 +292,23 @@ const RegisterPerfil = () => {
                 ref={(input) => {
                   passwordInput = input;
                 }}
-                style={[
-                  validateInput && !!!password && styles.validate,
-                  styles.input,
-                ]}
+                style={[styles.input, hasError("password") && styles.validate]}
                 placeholder="Senha"
                 secureTextEntry={isSecureText}
                 autoCapitalize="none"
                 autoCorrect={false}
-                value={password}
-                onChangeText={setPassword}
+                value={formState.values["password"] || ""}
+                onChangeText={(value) => handleChange("password", value)}
                 returnKeyType="next"
                 onSubmitEditing={() => {
                   passwordConfirmedInput.focus();
                 }}
                 blurOnSubmit={false}
+                onBlur={handleValidation}
               />
+              {hasError("password") && (
+                <Text style={styles.error}>{hasMessageError("password")}</Text>
+              )}
             </View>
             <View>
               <View style={styles.Touchable}>
@@ -249,33 +326,44 @@ const RegisterPerfil = () => {
                   passwordConfirmedInput = input;
                 }}
                 style={[
-                  validateInput && !!!passwordConfirmed && styles.validate,
                   styles.input,
+                  hasError("confirmPassword") && styles.validate,
                 ]}
                 placeholder="Confirme Senha"
                 secureTextEntry={isSecureText}
                 autoCapitalize="none"
                 autoCorrect={false}
-                value={passwordConfirmed}
-                onChangeText={setPasswordConfirmed}
+                value={formState.values["confirmPassword"] || ""}
+                onChangeText={(value) => handleChange("confirmPassword", value)}
                 returnKeyType="go"
                 onSubmitEditing={Keyboard.dismiss}
+                onBlur={handleValidation}
               />
+              {hasError("confirmPassword") && (
+                <Text style={styles.error}>
+                  {hasMessageError("confirmPassword")}
+                </Text>
+              )}
             </View>
           </View>
 
           <View style={styles.footer}>
             <TouchableOpacity
               style={styles.buttonCancelar}
-              onPress={handleGotoLogin}
+              onPress={handleGotGoToBack}
             >
               <Text style={styles.titleButtonCancel}>Cancelar</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonRegister}
+              disabled={isloading}
               onPress={handleSubmit}
             >
-              <Text style={styles.titleButtonRegister}>Registrar</Text>
+              {isloading ? (
+                <ActivityIndicator size={36} color={colors.white} />
+              ) : (
+                <Text style={styles.titleButtonRegister}>Registrar</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

@@ -1,51 +1,54 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert, ImageBackground } from "react-native";
 
 import api from "../../Services/api";
 import ItemPromotion from "../ItemPromotion";
-import requests from "../../Contexts/requests";
-import auth from "../../Contexts/auth";
+import MyOrderContext from "../../Contexts/myOrder";
+import AuthContext from "../../Contexts/auth";
 
 import styles from "./styles";
 
 const Promotion = () => {
-  const { updateDB } = useContext(requests);
-  const { signOut } = useContext(auth);
   const [dataProductPromotion, setDataProductPromotion] = useState([]);
+  const { changeDB } = useContext(MyOrderContext);
+  const { signOut } = useContext(AuthContext);
 
   useEffect(() => {
-    (async () => {
-      await api
-        .get("/product/promotion")
-        .then((response) => {
-          setDataProductPromotion(response.data);
-        })
-        .catch((err) => {
-          Alert.alert(
-            "Token expirou",
-            "Para continuar utilizando o aplicativo é necessário fazer novamento seu login.",
-            [
-              {
-                text: "OK",
-                onPress: () => signOut(),
-                style: "default",
-              },
-            ]
-          );
-        });
-    })();
-  }, [updateDB]);
+    let amoted = true;
+    if (amoted) {
+      (async () => {
+        await api
+          .get("/product/promotion")
+          .then((response) => {
+            setDataProductPromotion(response.data);
+          })
+          .catch((err) => {
+            signOut();
+            Alert.alert("Opss!!!", "Falha na comunicação.", [{ text: "OK" }]);
+          });
+      })();
+    }
+    return () => (amoted = false);
+  }, [changeDB]);
 
   return dataProductPromotion.length <= 0 ? (
     <View />
   ) : (
-    <View style={styles.promotionContent}>
+    <ImageBackground
+      source={require("../../assets/imgHeader.png")}
+      resizeMode={"cover"}
+      imageStyle={{
+        width: "100%",
+        transform: [{ scaleX: 1.5 }],
+      }}
+      style={styles.promotionContent}
+    >
       <ScrollView horizontal={true}>
         {dataProductPromotion.map((product) => (
           <ItemPromotion key={product.id} productPromotion={product} />
         ))}
       </ScrollView>
-    </View>
+    </ImageBackground>
   );
 };
 

@@ -126,11 +126,11 @@ const Styles = StyleSheet.create({
     color: colors.darker,
   },
   buttomSelectAddress: {
+    flexDirection: "row",
     backgroundColor: colors.lighter,
     alignItems: "center",
-    justifyContent: "center",
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 10,
     marginBottom: 15,
   },
   addressActive: {
@@ -158,6 +158,10 @@ const Styles = StyleSheet.create({
   textAddress: {
     fontFamily: "Poppins_400Regular",
     fontSize: fonts.small,
+    color: colors.dark,
+  },
+  textAddressActive: {
+    color: colors.white,
   },
   textneighborhood: {
     fontSize: fonts.smaller,
@@ -204,7 +208,8 @@ const Styles = StyleSheet.create({
   textButtonConfirm: {
     fontFamily: "Archivo_700Bold",
     fontSize: 14,
-    color: colors.darker,
+    color: colors.white,
+    letterSpacing: 1.1,
   },
   buttomModal: {
     backgroundColor: colors.lighter,
@@ -223,6 +228,9 @@ const Styles = StyleSheet.create({
     borderTopWidth: 2,
     borderTopColor: colors.lighter,
     width: "100%",
+  },
+  textActive: {
+    color: colors.white,
   },
   buttonNewAddress: {
     backgroundColor: colors.white,
@@ -312,13 +320,36 @@ const Styles = StyleSheet.create({
   },
   textButtonApply: {
     fontFamily: "Archivo_700Bold",
-    color: colors.darker,
+    fontSize: fonts.regular,
+    color: colors.white,
+    textTransform: "uppercase",
   },
   contentThing: {
     fontFamily: "Poppins_400Regular",
     fontSize: fonts.small,
     color: "#000",
     paddingLeft: 20,
+  },
+  title: {
+    fontFamily: "Archivo_700Bold",
+    fontSize: fonts.bigger,
+    fontWeight: "700",
+  },
+  text: {
+    fontFamily: "Archivo_400Regular",
+    fontSize: fonts.regular,
+    color: colors.regular,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  btn: {
+    width: "100%",
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
   },
 });
 

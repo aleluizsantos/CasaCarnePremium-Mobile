@@ -27,8 +27,9 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: "#FFF",
     borderRadius: 10,
-    marginBottom: 8,
-    paddingHorizontal: 24,
+    marginTop: 8,
+    paddingLeft: 24,
+    paddingRight: 40,
     fontSize: 14,
     borderWidth: 1,
     borderColor: colors.light,
@@ -36,12 +37,8 @@ const styles = StyleSheet.create({
   },
   Touchable: {
     position: "absolute",
-    right: 10,
-    top: 18,
-    justifyContent: "center",
-    alignItems: "center",
-    height: 25,
-    width: 30,
+    right: 20,
+    top: 24,
     zIndex: 1,
   },
   IconInput: {
@@ -50,6 +47,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 15,
     justifyContent: "space-between",
     width: "100%",
   },
@@ -76,12 +74,16 @@ const styles = StyleSheet.create({
   },
   titleButtonRegister: {
     fontFamily: "Archivo_700Bold",
-    color: colors.darker,
+    color: colors.white,
   },
-
   validate: {
     borderWidth: 1,
     borderColor: colors.red,
+  },
+  error: {
+    paddingHorizontal: 10,
+    color: colors.red,
+    fontSize: fonts.small,
   },
 });
 

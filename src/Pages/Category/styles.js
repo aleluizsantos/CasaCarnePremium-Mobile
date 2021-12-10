@@ -7,27 +7,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: Constants.statusBarHeight,
+    backgroundColor: colors.lighter,
+    zIndex: 1,
   },
-
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   titleCategory: {
     fontFamily: "Archivo_700Bold",
     fontSize: 14,
-    color: colors.primary,
+    color: "#000",
     paddingHorizontal: 15,
-    paddingTop: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 1,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
+    padding: 5,
+    backgroundColor: "rgba(255,255,255,0.5)",
+    width: "100%",
+    textAlign: "center",
   },
   categoryContent: {
     flexDirection: "row",
-    justifyContent: "center",
     flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

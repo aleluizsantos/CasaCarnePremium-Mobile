@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import Constants from "expo-constants";
-import { colors } from "../../Styles";
+import { colors, fonts } from "../../Styles";
 
 const Styles = StyleSheet.create({
   container: {
@@ -16,24 +16,25 @@ const Styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.light,
+    backgroundColor: "rgba(255,255,255,0.5)",
+    // borderBottomWidth: 1,
+    // borderBottomColor: colors.light,
   },
   title: {
     fontFamily: "Archivo_700Bold",
-    fontSize: 16,
-    color: colors.primary,
+    fontSize: fonts.big,
+    color: "#000",
   },
   breadcrumb: {
-    fontFamily: "Archivo_400Regular",
-    fontSize: 14,
-    color: colors.primary,
+    fontFamily: "Archivo_700Bold",
+    fontSize: fonts.small,
+    color: "#000",
   },
   productContent: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
     flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
   },
   footer: {
     backgroundColor: colors.white,
@@ -67,15 +68,15 @@ const Styles = StyleSheet.create({
     color: "#32264d",
   },
   icoEmpty: {
-    marginTop: 50,
+    marginTop: 30,
     alignItems: "center",
     alignSelf: "center",
-    width: 150,
-    height: 150,
+    width: "80%",
+    height: 200,
   },
   textIcon: {
-    marginTop: 20,
-    fontFamily: "Poppins_400Regular",
+    marginTop: 5,
+    fontFamily: "Archivo_700Bold",
     fontSize: 14,
     textAlign: "center",
     marginHorizontal: 20,

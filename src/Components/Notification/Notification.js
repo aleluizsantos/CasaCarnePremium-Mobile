@@ -4,7 +4,7 @@ import * as Notifications from "expo-notifications";
 export const schedulePushNotification = async (message) => {
   return await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Casa de Carne Premium! 📌",
+      title: "Casa Carne Premium!",
       body: message,
     },
     trigger: { seconds: 2 },

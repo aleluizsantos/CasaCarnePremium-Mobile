@@ -6,6 +6,14 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { colors, formatMoney, formatDataTime } from "../../Styles";
 
+const typeDelivery = {
+  EM_ANALISE: 1,
+  EM_PREPARACAO: 2,
+  ROTA_ENTREGA: 3,
+  RETIRAR_LOJA: 4,
+  FINALIZADO: 6,
+};
+
 const MyOrdes = ({ request }) => {
   const navigation = useNavigation();
 
@@ -15,7 +23,15 @@ const MyOrdes = ({ request }) => {
     });
   }
   return (
-    <View style={styles.container}>
+    // <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { borderColor: request.BGcolor },
+        request.statusRequest_id === typeDelivery.FINALIZADO &&
+          styles.containerOpacity,
+      ]}
+    >
       <View style={styles.fieldGroup}>
         <Text style={styles.textNumberOrder}>#{request.id}</Text>
         <View style={styles.fieldGroup}>
@@ -28,8 +44,11 @@ const MyOrdes = ({ request }) => {
 
       <View style={styles.fieldGroup}>
         <Text style={styles.total}>{formatMoney(request.totalPurchase)}</Text>
-
-        <Text style={styles.timeDelivery}>{request.timedelivery}</Text>
+        {request.statusRequest_id !== typeDelivery.FINALIZADO ? (
+          <Text style={styles.timeDelivery}>{request.timeDelivery}</Text>
+        ) : (
+          <Text style={styles.timeDelivery}>Produto entregue</Text>
+        )}
       </View>
 
       <View style={styles.fieldGroup}>

@@ -40,7 +40,7 @@ const Styles = StyleSheet.create({
   fieldGroup: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 15,
+    padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: colors.light,
   },
@@ -52,6 +52,8 @@ const Styles = StyleSheet.create({
   value: {
     fontFamily: "Archivo_400Regular",
     fontSize: fonts.small,
+    paddingStart: 40,
+    paddingVertical: 5,
   },
   groupButton: {
     flexDirection: "row",
@@ -67,6 +69,9 @@ const Styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
+  },
+  textButton: {
+    color: colors.white,
   },
   buttonCancel: {
     backgroundColor: colors.light,
@@ -130,6 +135,15 @@ const Styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  titleButtonRegister: {
+    fontFamily: "Archivo_700Bold",
+    color: colors.white,
+    textTransform: "uppercase",
+  },
+  titleButtonCancel: {
+    fontFamily: "Archivo_700Bold",
+    color: colors.darker,
   },
   buttonCancelModal: {
     backgroundColor: colors.light,

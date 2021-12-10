@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 
@@ -13,18 +13,21 @@ import api from "../../Services/api";
 function MyOrderDetails() {
   const route = useRoute();
   const [dataItemRequest, setDataItemRequest] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { request } = route.params;
 
   useEffect(() => {
-    async function loadingItemRequest() {
-      await api
-        .get("request/items", { headers: { request_id: request.id } })
-        .then((response) => {
+    let amoted = true;
+    if (amoted) {
+      (async () => {
+        await api.get(`request/items/${request.id}`).then((response) => {
           setDataItemRequest(response.data.itemsRequest);
+          setIsLoading(false);
         });
+      })();
     }
-    loadingItemRequest();
+    return () => (amoted = false);
   }, []);
 
   return (
@@ -43,7 +46,17 @@ function MyOrderDetails() {
           </View>
 
           <View style={styles.fieldGroup}>
-            <Text style={styles.cartCredit}>{request.payment}</Text>
+            <Text style={styles.textTitle}>Tipo de pagamento</Text>
+            <Text style={styles.textTotal}>{request.payment}</Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.textTitle}>Taxa de entrega</Text>
+            <Text style={styles.textTotal}>
+              {formatMoney(request.vTaxaDelivery)}
+            </Text>
+          </View>
+          <View style={styles.fieldGroup}>
+            <Text style={styles.cartCredit}>Total</Text>
             <Text style={styles.total}>
               {formatMoney(request.totalPurchase)}
             </Text>
@@ -52,11 +65,15 @@ function MyOrderDetails() {
       </SubHeader>
 
       <View style={styles.body}>
-        <ScrollView>
-          {dataItemRequest.map((item) => (
-            <MyOrdesItem key={item.id} items={item} />
-          ))}
-        </ScrollView>
+        {isLoading ? (
+          <ActivityIndicator size={48} color={colors.darker} />
+        ) : (
+          <ScrollView>
+            {dataItemRequest.map((item) => (
+              <MyOrdesItem key={item.id} items={item} />
+            ))}
+          </ScrollView>
+        )}
       </View>
     </View>
   );

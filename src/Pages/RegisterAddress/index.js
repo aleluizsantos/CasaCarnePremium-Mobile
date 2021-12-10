@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { TextInputMask } from "react-native-masked-text";
 import axios from "axios";
@@ -14,6 +16,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 
+import AuthContext from "../../Contexts/auth";
 import Header from "../../Components/Header";
 import api from "../../Services/api";
 import styles from "./styles";
@@ -21,7 +24,10 @@ import { colors } from "../../Styles";
 import { ScrollView } from "react-native-gesture-handler";
 
 const RegisterAddress = () => {
-  const [listAdrress, setListAdrress] = useState([]);
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { user, setUserAddress } = useContext(AuthContext);
+  const [addressData, setAddressData] = useState([]);
   const [cep, setCep] = useState("");
   const [address, setAddress] = useState("");
   const [number, setNumber] = useState("");
@@ -32,22 +38,21 @@ const RegisterAddress = () => {
   const [validateInput, setValidateInput] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [updateAdrressId, setUpdateAddressId] = useState(null);
-  const [updateAddressUserId, setUpdateAddressUserId] = useState(null);
   const [pointReference, setPointReference] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Carregar todos os endereços do usuário
   useEffect(() => {
-    (async () => {
-      await api
-        .get("/address")
-        .then((response) => {
-          setListAdrress(response.data);
-        })
-        .catch((error) => {
-          console.log("Page-address", error);
-        });
-    })();
+    let amoted = true;
+    if (amoted) {
+      (async () => {
+        // Verificar se na rota estiver active = true abrir modal cadastro Endereço
+        route.params?.active && setModalVisible(true);
+        await api
+          .get("address")
+          .then((response) => setAddressData(response.data));
+      })();
+    }
+    return () => (amoted = false);
   }, []);
 
   // Definir o endereço como Padrão
@@ -58,14 +63,22 @@ const RegisterAddress = () => {
         "Seu endereço de entrega já é padrão."
       );
     } else {
-      // atualizar a lista
-      const newListAddress = listAdrress.map((item) => ({
-        ...item,
-        active: item.id == address.id ? true : false,
-      }));
-      setListAdrress(newListAddress);
+      const newListAddress = addressData.map((item) => {
+        if (item.id === address.id) {
+          const addr = { ...item, active: true };
+          AsyncStorage.setItem(
+            "@CasaCarnePremium:UserAddress",
+            JSON.stringify(addr)
+          );
+          setUserAddress(addr);
+          return addr;
+        } else {
+          return { ...item, active: false };
+        }
+      });
+      setAddressData(newListAddress);
       Alert.alert(
-        "Alterado enderço padrão",
+        "Alterado endereço padrão",
         "Seu endereço padrão de entrega foi alterado com sucesso."
       );
       await api.put(`/address/active/${address.id}`, {});
@@ -74,14 +87,10 @@ const RegisterAddress = () => {
 
   // Excluir um endereço da lista
   async function handleDeleteAddress(_id) {
-    const responseDelete = await api.delete(`/address/delete/${_id}`);
-
-    if (!!responseDelete) {
-      const newListAddress = listAdrress.filter((item) => {
-        return item.id !== _id;
-      });
-      setListAdrress(newListAddress);
-    }
+    await api.delete(`/address/delete/${_id}`).then(() => {
+      const newAddr = addressData.filter((item) => item.id !== _id);
+      setAddressData(newAddr);
+    });
   }
   // Abre o modal com todos os campos vazios novo Endereço
   function handleAddAddress() {
@@ -97,7 +106,6 @@ const RegisterAddress = () => {
 
     setModalVisible(!modalVisible);
   }
-
   // Carrega os dados no modal para atualizar
   function handleEditAddress(_itemAddress) {
     setAddress(_itemAddress.address);
@@ -110,45 +118,49 @@ const RegisterAddress = () => {
     setPointReference(_itemAddress.pointReference);
 
     setUpdateAddressId(_itemAddress.id); //Se possuir um id, indica campos para editar
-    setUpdateAddressUserId(_itemAddress.user_id);
     setValidateInput(false);
 
     setModalVisible(!modalVisible);
   }
   // Criar ou Editar um endereço
   async function handleSubmit() {
-    if (!!address && !!number && !!neighborhood && !!city && !!uf) {
-      const dataAddress = {
-        cep,
-        address,
-        number,
-        neighborhood,
-        city,
-        uf,
-        pointReference,
-        active: listAdrress.length <= 0 ? true : !!active ? active : false,
-      };
-
-      if (updateAdrressId !== null) {
-        // Editar campo
-        await api.put(`/address/${updateAdrressId}`, dataAddress);
-        const newListAddress = listAdrress.filter((item) => {
-          return item.id !== updateAdrressId;
-        });
-        setListAdrress([
-          ...newListAddress,
-          { id: updateAdrressId, ...dataAddress, user_id: updateAddressUserId },
-        ]);
-        setUpdateAddressId(null);
+    if (Boolean(user)) {
+      if (!!address && !!number && !!neighborhood && !!city && !!uf) {
+        setIsLoading(true);
+        const dataAddress = {
+          cep,
+          address,
+          number,
+          neighborhood,
+          city,
+          uf,
+          pointReference,
+          active:
+            addressData.length <= 0 ? true : updateAdrressId ? active : false,
+        };
+        if (updateAdrressId !== null) {
+          // Editar campo
+          await api.put(`/address/${updateAdrressId}`, dataAddress).then(() => {
+            editAddressDeleivery({ id: updateAdrressId, ...dataAddress });
+          });
+          setUpdateAddressId(null);
+        } else {
+          // Criar um novo endereço
+          await api.post("/address/create", dataAddress).then((response) => {
+            setAddressData([...addressData, response.data]);
+          });
+        }
+        setModalVisible(!modalVisible);
+        AsyncStorage.setItem(
+          "@CasaCarnePremium:UserAddress",
+          JSON.stringify(dataAddress)
+        );
+        setUserAddress(dataAddress);
+        route.params?.active && navigation.navigate("Car");
       } else {
-        // Criar um novo endereço
-        await api.post("/address/create", dataAddress);
-        setListAdrress([...listAdrress, dataAddress]);
+        setValidateInput(true);
       }
-
-      setModalVisible(!modalVisible);
-    } else {
-      setValidateInput(true);
+      setIsLoading(false);
     }
   }
 
@@ -201,9 +213,11 @@ const RegisterAddress = () => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {}}
+        onRequestClose={() => setModalVisible(false)}
       >
-        <ScrollView>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               {!!updateAdrressId && (
@@ -212,7 +226,7 @@ const RegisterAddress = () => {
               <View style={styles.form}>
                 <View>
                   <View style={styles.Touchable}>
-                    {isLoading ? (
+                    {isLoading && !Boolean(number) ? (
                       <ActivityIndicator color={colors.success} size="large" />
                     ) : (
                       <Feather name="link" size={24} style={styles.iconInput} />
@@ -325,12 +339,6 @@ const RegisterAddress = () => {
 
                 <View style={styles.containerButtonAdd}>
                   <TouchableOpacity
-                    style={styles.buttonRegister}
-                    onPress={() => handleSubmit()}
-                  >
-                    <Text style={styles.titleButtonRegister}>Salvar</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
                     style={styles.buttonCancel}
                     onPress={() => {
                       setModalVisible(!modalVisible);
@@ -338,6 +346,17 @@ const RegisterAddress = () => {
                     }}
                   >
                     <Text style={styles.titleButtonCancel}>Voltar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonRegister}
+                    disabled={isLoading}
+                    onPress={() => handleSubmit()}
+                  >
+                    {isLoading && Boolean(number) ? (
+                      <ActivityIndicator size={36} color={colors.white} />
+                    ) : (
+                      <Text style={styles.titleButtonRegister}>Salvar</Text>
+                    )}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -352,11 +371,11 @@ const RegisterAddress = () => {
         <View>
           <View style={styles.titleAddress}>
             <Text style={styles.titleBody}>Endereços cadastrados</Text>
-            <Text style={styles.titleBody}> {listAdrress.length} </Text>
+            <Text style={styles.titleBody}> {addressData.length} </Text>
           </View>
 
           <FlatList
-            data={listAdrress}
+            data={addressData}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View

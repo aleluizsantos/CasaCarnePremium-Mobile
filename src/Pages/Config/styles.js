@@ -12,11 +12,11 @@ const Styles = StyleSheet.create({
   },
   fieldsGroup: {
     paddingVertical: 15,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.4,
     borderBottomColor: colors.light,
   },
   title: {
-    fontFamily: "Archivo_700Bold",
+    fontFamily: "Archivo_400Regular",
     fontSize: fonts.big,
     marginLeft: 10,
   },

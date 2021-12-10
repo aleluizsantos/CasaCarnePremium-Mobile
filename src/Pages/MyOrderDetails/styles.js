@@ -19,6 +19,9 @@ const Styles = StyleSheet.create({
   contentDatetime: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
+    width: "100%",
+    paddingBottom: 10,
   },
   textDateTime: {
     fontFamily: "Archivo_400Regular",
@@ -28,7 +31,7 @@ const Styles = StyleSheet.create({
   textNumberOrder: {
     position: "absolute",
     right: 5,
-    top: -30,
+    top: -35,
     fontFamily: "Archivo_700Bold",
     fontSize: fonts.big,
     color: colors.regular,
@@ -36,6 +39,15 @@ const Styles = StyleSheet.create({
   cartCredit: {
     fontSize: fonts.regular,
     fontFamily: "Archivo_700Bold",
+    fontSize: fonts.small,
+  },
+  textTitle: {
+    fontSize: fonts.regular,
+    fontFamily: "Archivo_400Regular",
+    fontSize: fonts.small,
+  },
+  textTotal: {
+    color: colors.regular,
     fontSize: fonts.small,
   },
   total: {

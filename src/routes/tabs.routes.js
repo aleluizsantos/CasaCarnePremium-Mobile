@@ -1,47 +1,36 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Feather, AntDesign } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
-import { colors } from "../Styles";
-
-import Home from "../Pages/Home";
 import Category from "../Pages/Category";
 import Search from "../Pages/Search";
 import MyOrder from "../Pages/MyOrder";
 import Config from "../Pages/Config";
+import { colors } from "../Styles";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
 function Tabs() {
   return (
     <Navigator
+      initialRouteName={"Category"}
       tabBarOptions={{
         style: {
           elevation: 0,
           shadowOpacity: 0,
-          height: 60,
+          height: 62,
         },
         labelStyle: {
           fontFamily: "Poppins_600SemiBold",
-          fontSize: 11,
-          paddingBottom: 5,
+          fontSize: 10,
+          paddingBottom: 2,
         },
         inactiveBackgroundColor: "#fafafc",
         activeBackgroundColor: "#ebedf5",
         inactiveTintColor: "#c1bccc",
-        activeTintColor: "#32264d",
+        activeTintColor: colors.primary,
       }}
     >
-      <Screen
-        name="Home"
-        component={Home}
-        options={{
-          tabBarVisible: false,
-          tabBarIcon: ({ color, size, focused }) => {
-            return <AntDesign name="home" size={size} color={color} />;
-          },
-        }}
-      />
       <Screen
         name="Category"
         component={Category}
@@ -50,7 +39,7 @@ function Tabs() {
           tabBarIcon: ({ color, size, focused }) => {
             return (
               <AntDesign
-                style={focused && { top: -1 }}
+                style={{ top: 4 }}
                 name="isv"
                 size={focused ? 28 : size}
                 color={color}
@@ -67,7 +56,7 @@ function Tabs() {
           tabBarIcon: ({ color, size, focused }) => {
             return (
               <AntDesign
-                style={focused && { top: -1 }}
+                style={{ top: 4 }}
                 name="search1"
                 size={focused ? 28 : size}
                 color={color}
@@ -85,8 +74,8 @@ function Tabs() {
             return (
               <AntDesign
                 name="tagso"
-                style={focused && { top: -1 }}
-                size={focused ? 28 : size}
+                style={{ top: 4 }}
+                size={focused ? 30 : size}
                 color={color}
               />
             );
@@ -102,7 +91,7 @@ function Tabs() {
             return (
               <AntDesign
                 name="setting"
-                style={focused && { top: -1 }}
+                style={{ top: 4 }}
                 size={focused ? 28 : size}
                 color={color}
               />

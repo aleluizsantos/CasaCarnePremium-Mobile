@@ -71,7 +71,8 @@ const Styles = StyleSheet.create({
   },
   titleButtonRegister: {
     fontFamily: "Archivo_700Bold",
-    color: colors.darker,
+    color: colors.white,
+    textTransform: "uppercase",
   },
   buttonCancel: {
     backgroundColor: colors.light,

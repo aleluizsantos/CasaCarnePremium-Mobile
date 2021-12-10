@@ -31,9 +31,13 @@ function Perfil() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    setName(user.name);
-    setEmail(user.email);
-    setPhone(user.phone);
+    let amoted = true;
+    if (amoted) {
+      setName(user.name);
+      setEmail(user.email);
+      setPhone(user.phone);
+    }
+    return () => (amoted = false);
   }, []);
 
   function handleGoBack() {
@@ -72,13 +76,16 @@ function Perfil() {
       passwordNew !== "" &&
       passwordOld !== ""
     ) {
+      setIsLoading(true);
       passwordChange(dataPassChange).then((response) => {
         if (response.success) {
           cleanFieldPassChanger();
+          setIsLoading(false);
         } else {
           Alert.alert("Erro", response.error);
           passOldInput.focus();
           setPasswordOld("");
+          setIsLoading(false);
         }
       });
     } else {
@@ -149,6 +156,14 @@ function Perfil() {
 
               <View style={styles.containerButtonAdd}>
                 <TouchableOpacity
+                  style={styles.buttonCancelModal}
+                  onPress={() => {
+                    setModalEditUser(!modalEditUser);
+                  }}
+                >
+                  <Text style={styles.titleButtonCancel}>Voltar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.buttonUpDatePerfil}
                   disabled={isLoading}
                   onPress={handleUserChange}
@@ -158,14 +173,6 @@ function Perfil() {
                   ) : (
                     <Text style={styles.titleButtonRegister}>Salvar</Text>
                   )}
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancelModal}
-                  onPress={() => {
-                    setModalEditUser(!modalEditUser);
-                  }}
-                >
-                  <Text style={styles.titleButtonCancel}>Voltar</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -242,7 +249,7 @@ function Perfil() {
                   onPress={handleUserChangePassword}
                 >
                   {isLoading ? (
-                    <ActivityIndicator color="#fff" />
+                    <ActivityIndicator size={24} color="#fff" />
                   ) : (
                     <Text style={styles.titleButtonRegister}>Alterar</Text>
                   )}
@@ -298,7 +305,7 @@ function Perfil() {
           style={styles.buttonEditPerfil}
           onPress={() => setModalEditUser(!modalEditUser)}
         >
-          <Text>Editar Perfil</Text>
+          <Text style={styles.textButton}>Editar Perfil</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonCancel} onPress={handleGoBack}>
           <Text>Cancelar</Text>

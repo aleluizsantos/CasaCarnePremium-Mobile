@@ -1,124 +1,135 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   View,
   Text,
   ScrollView,
   Image,
-  ActivityIndicator,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { BorderlessButton } from "react-native-gesture-handler";
 
-import api from "../../Services/api";
-import Requests from "../../Contexts/requests";
+import MyOrder from "../../Contexts/myOrder";
 import Auth from "../../Contexts/auth";
 import Header from "../../Components/Header";
 import SubHeader from "../../Components/SubHeader";
 import ItemCar from "../../Components/ItemCar";
+import ModalNotice from "../../Components/ModalNotice";
 import { colors, formatMoney } from "../../Styles";
 import imgCartsEmpty from "../../assets/cartsEmpty.png";
+import imgDelivery from "../../assets/delivery.png";
+import imgHome from "../../assets/home.png";
 import styles from "./styles";
 //--------------------------------------------------------------------------------
 // PAGE - Carrinho
 //--------------------------------------------------------------------------------
 function Car() {
-  const { itemCar, totalCar } = useContext(Requests);
-  const { signOut } = useContext(Auth);
-  const [isloading, setIsLoading] = useState(true);
-  const [taxaDelivery, setTaxaDelivery] = useState({ vMinTaxa: 0, taxa: 0 });
-  const [vtaxaDelivery, setVtaxaDelivery] = useState(0);
-
-  useEffect(() => {
-    (async () => {
-      await api
-        .get("/taxa")
-        .then((response) => {
-          setTaxaDelivery(response.data);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          Alert.alert(
-            "Token expirou",
-            "Para continuar utilizando o aplicativo é necessário fazer novamento seu login.",
-            [
-              {
-                text: "OK",
-                onPress: () => signOut(),
-                style: "default",
-              },
-            ]
-          );
-        });
-    })();
-  }, []);
-
-  useEffect(() => {
-    const tx =
-      parseFloat(totalCar) >= taxaDelivery.vMinTaxa ? 0 : taxaDelivery.taxa;
-    setVtaxaDelivery(tx);
-  }, [isloading, totalCar]);
-
+  const {
+    itemCar,
+    totalCar,
+    taxaDelivery,
+    typeDelivery,
+    selectedTypeDelivery,
+    setSelectedTypeDelivery,
+  } = useContext(MyOrder);
+  const { user } = useContext(Auth);
   const navigation = useNavigation();
+  const [toogleModal, setToogleModal] = useState(true);
+  const [taxa, setTaxa] = useState(0);
+
+  useEffect(() => {
+    let amoted = true;
+    if (amoted) {
+      (() => {
+        selectedTypeDelivery?.id && selectedTypeDelivery?.id !== 2
+          ? totalCar >= taxaDelivery.vMinTaxa && taxaDelivery.vMinTaxa > 0
+            ? setTaxa(0)
+            : setTaxa(Number(taxaDelivery.taxa))
+          : setTaxa(0);
+      })();
+    }
+    return () => (amoted = false);
+  }, [selectedTypeDelivery]);
 
   // Navegar para tela pagamento para finalizar o pedido
   function handleGotoPayments() {
-    navigation.navigate("Payments", {
-      vTaxaDelivery: vtaxaDelivery,
-    });
+    if (user === null) {
+      Alert.alert(
+        "Falta pouco!",
+        "Para finalizar o pedido é necessário fornecer algumas informações.",
+        [
+          {
+            text: "Cancelar",
+            style: "destructive",
+          },
+          {
+            text: "Informa dados",
+            onPress: () => navigation.navigate("Onboarding"),
+          },
+        ]
+      );
+    } else {
+      navigation.navigate("Payments");
+    }
   }
 
-  if (isloading) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator color="#484848" size={48} />
-      </View>
-    );
+  function handleSelectedTypeDelivery(selectedTypeDelivery) {
+    setSelectedTypeDelivery(selectedTypeDelivery);
+    setToogleModal(false);
   }
 
-  //--------------------------------------------------------------------------------
-  // Retorno da função Renderização do Carrinho
-  //--------------------------------------------------------------------------------
   return (
     <View style={styles.container}>
       <Header goBack={true} />
       <SubHeader title="Meu Carrinho" subTitle="Produtos selecionados" />
-      {/* Itens do pedido */}
-      <ScrollView>
-        {itemCar.map((items) => (
-          <ItemCar key={items.name} itemCar={items} />
-        ))}
-      </ScrollView>
 
-      {itemCar.length <= 0 ? (
+      {itemCar.length === 0 ? (
         <View style={styles.containtImage}>
           <Image source={imgCartsEmpty} style={styles.imgCartEmpty} />
-          <Text style={styles.textNotItemCart}>
-            Você não tem nenhum item no carrinho!
-          </Text>
+          <Text style={styles.textNotItemCart}>Opss!! Carrinho Vazio.</Text>
         </View>
       ) : (
+        <ScrollView>
+          {itemCar.map((items, idx) => (
+            <ItemCar key={idx} itemCar={items} />
+          ))}
+        </ScrollView>
+      )}
+
+      {itemCar.length > 0 && (
         <View style={styles.totalContent}>
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert(
+                "Tipo de entrega",
+                "Você poderá alterar o tipo de entrega, após confirmar o pedido.",
+                [{ text: "OK" }]
+              )
+            }
+            style={styles.fieldGroup}
+          >
+            <Text style={styles.taxaDelivery}>Tipo entrega</Text>
+            <Text style={styles.taxaDelivery}>
+              {selectedTypeDelivery?.description || ""}
+            </Text>
+          </TouchableOpacity>
           <View style={styles.fieldGroup}>
             <Text style={styles.taxaDelivery}>Taxa de entrega</Text>
-            <Text style={styles.taxaDelivery}>
-              {formatMoney(vtaxaDelivery)}
-            </Text>
+            <Text style={styles.taxaDelivery}>{formatMoney(taxa)}</Text>
           </View>
 
           {parseFloat(totalCar) < taxaDelivery.vMinTaxa && (
             <View style={[styles.fieldGroup, { justifyContent: "flex-end" }]}>
               <Text style={{ color: colors.red }}>
-                acima de R$ 50,00 entrega GRATIS
+                acima de R$ {taxaDelivery.vMinTaxa} entrega GRATIS
               </Text>
             </View>
           )}
 
           <View style={styles.fieldGroup}>
             <Text style={styles.labelTotal}>Total</Text>
-            <Text style={styles.total}>
-              {formatMoney(parseFloat(totalCar) + parseFloat(vtaxaDelivery))}
-            </Text>
+            <Text style={styles.total}>{formatMoney(totalCar + taxa)}</Text>
           </View>
           <BorderlessButton
             enabled={!!totalCar ? true : false}
@@ -132,6 +143,39 @@ function Car() {
             <Text style={styles.textButtonConfirm}>Confirmar Pedido</Text>
           </BorderlessButton>
         </View>
+      )}
+      {selectedTypeDelivery === null && itemCar.length > 0 && (
+        <ModalNotice show={toogleModal}>
+          <Text style={styles.titleModal}>Como será sua entrega!</Text>
+          <View style={styles.footerButtom}>
+            <TouchableOpacity
+              onPress={() => handleSelectedTypeDelivery(typeDelivery[0])}
+              style={styles.button}
+            >
+              <Image
+                resizeMode="contain"
+                source={imgDelivery}
+                style={{ width: 40, height: 40, marginRight: 15 }}
+              />
+              <Text style={styles.textButton}>
+                {typeDelivery[0].description}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleSelectedTypeDelivery(typeDelivery[1])}
+              style={styles.buttonOutline}
+            >
+              <Image
+                resizeMode="contain"
+                source={imgHome}
+                style={{ width: 28, height: 28, marginRight: 15 }}
+              />
+              <Text style={styles.textButton}>
+                {typeDelivery[1].description}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ModalNotice>
       )}
     </View>
   );

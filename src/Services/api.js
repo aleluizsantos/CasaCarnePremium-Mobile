@@ -1,8 +1,8 @@
 import axios from "axios";
-import AsyncStorage from "@react-native-community/async-storage";
-import Server_URL from "./Server_URL";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import serverURL from "./serverURL";
 
-const url = Server_URL.URL;
+const url = serverURL.URL;
 
 const api = axios.create({
   baseURL: url,
@@ -16,8 +16,8 @@ api.interceptors.request.use(
   async function (config) {
     // Capturar o token salvo no dispositivo
     await AsyncStorage.multiGet([
-      "@Premium:token",
-      "@Premium:tokenPushNotification",
+      "@CasaCarnePremium:token",
+      "@CasaCarnePremium:tokenPushNotification",
     ]).then((response) => {
       if (response) {
         const tokenUser = response[0][1];
