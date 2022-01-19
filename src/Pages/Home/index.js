@@ -16,7 +16,7 @@ import {
 import AuthContext from "../../Contexts/auth";
 import RequestContext from "../../Contexts/requests";
 import ModalShow from "../../Components/ModalShow";
-import SERVER_URL from "../../Services/Server_URL";
+import serverURL from "../../Services/serverURL";
 import styles from "./styles";
 
 const Home = () => {
@@ -40,7 +40,7 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       // Realizar conexão via socket
-      const socket = io(SERVER_URL.URL, {
+      const socket = io(serverURL.URL, {
         transports: ["websocket"],
         jsonp: false,
       });

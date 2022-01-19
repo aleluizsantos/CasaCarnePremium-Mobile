@@ -50,7 +50,7 @@ function Car() {
       })();
     }
     return () => (amoted = false);
-  }, [selectedTypeDelivery]);
+  }, [selectedTypeDelivery, totalCar]);
 
   // Navegar para tela pagamento para finalizar o pedido
   function handleGotoPayments() {
@@ -114,6 +114,7 @@ function Car() {
               {selectedTypeDelivery?.description || ""}
             </Text>
           </TouchableOpacity>
+
           <View style={styles.fieldGroup}>
             <Text style={styles.taxaDelivery}>Taxa de entrega</Text>
             <Text style={styles.taxaDelivery}>{formatMoney(taxa)}</Text>
@@ -129,7 +130,7 @@ function Car() {
 
           <View style={styles.fieldGroup}>
             <Text style={styles.labelTotal}>Total</Text>
-            <Text style={styles.total}>{formatMoney(totalCar + taxa)}</Text>
+            <Text style={styles.total}>{formatMoney(totalCar)}</Text>
           </View>
           <BorderlessButton
             enabled={!!totalCar ? true : false}
@@ -144,6 +145,7 @@ function Car() {
           </BorderlessButton>
         </View>
       )}
+
       {selectedTypeDelivery === null && itemCar.length > 0 && (
         <ModalNotice show={toogleModal}>
           <Text style={styles.titleModal}>Como será sua entrega!</Text>

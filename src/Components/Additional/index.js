@@ -77,8 +77,8 @@ const Additional = ({ title, additional, open, onChange, onValues }) => {
 
         <AntDesign
           name={openItem ? "up" : "down"}
-          size={22}
-          color={colors.regular}
+          size={24}
+          color={colors.darker}
         />
       </TouchableOpacity>
 

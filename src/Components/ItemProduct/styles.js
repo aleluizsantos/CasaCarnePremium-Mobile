@@ -1,16 +1,16 @@
 import { StyleSheet, Dimensions } from "react-native";
 import { colors, fonts } from "../../Styles";
 
-const { width } = Dimensions.get("window");
+const { height, width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
     position: "relative",
     backgroundColor: colors.white,
     borderRadius: 8,
-    margin: 10,
-    width: 150,
-    height: 150,
+    margin: 8,
+    width: width / 2 - 32,
+    height: height / 3.2 - 68,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: {

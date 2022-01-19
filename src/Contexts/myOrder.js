@@ -47,14 +47,14 @@ export const MyOrderProvider = ({ children }) => {
   useEffect(() => {
     let amoted = true;
     (async () => {
-      await api
-        .get("payment")
-        .then((response) => setTypePayments(response.data));
-      await api.get("operation").then((response) => {
+      await api.get("operation").then(async (response) => {
         setTypeDelivery(response.data.deliveryTyper);
         setOpenClose(response.data.open_close);
         setTaxaDelivery(response.data.taxaDelivery);
-        setIsloading(false);
+        await api.get("payment").then((response) => {
+          setTypePayments(response.data);
+          setIsloading(false);
+        });
       });
     })();
     return () => (amoted = false);

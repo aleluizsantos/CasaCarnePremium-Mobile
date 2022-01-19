@@ -4,13 +4,14 @@ import { colors } from "../../Styles";
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    backgroundColor: "#E6E6E6",
+    backgroundColor: "#F1F1F1",
     padding: 10,
     borderRadius: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 10,
     marginTop: 5,
+    borderWidth: 0.5,
   },
   product: {
     flexDirection: "row",
@@ -35,9 +36,9 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "-90deg" }],
   },
   imgProduct: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
+    height: 75,
+    width: 75,
+    borderRadius: 15,
     marginRight: 10,
   },
   groupButton: {
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     top: 38,
-    right: 20,
+    right: 25,
   },
   buttonIncDec: {
     padding: 10,

@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Image, TouchableOpacity, Text } from "react-native";
 
 import styles from "./styles";
-import imgBurgger from "../../assets/onBoarding2.png";
+import imgLogoTitle from "../../assets/logoTitle.png";
 import MyOrderContext from "../../Contexts/myOrder";
 
 const onboarding = () => {
@@ -22,7 +22,7 @@ const onboarding = () => {
   return (
     <View style={styles.container}>
       <View style={styles.contentBody}>
-        <Image source={imgBurgger} style={styles.imgTitle} />
+        <Image source={imgLogoTitle} style={styles.imgTitle} />
         <Text style={styles.title}>Bem Vindo</Text>
         <Text style={styles.subTitle}>
           Entrega rápida na comodidade de sua casa

@@ -21,8 +21,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imgTitle: {
-    width: 200,
-    height: 200,
+    width: 190,
+    height: 150,
     resizeMode: "cover",
   },
   title: {
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_600SemiBold",
     textAlign: "center",
     fontSize: fonts.big,
-    padding: 15,
+    padding: 20,
   },
   description: {
     fontFamily: "Poppins_400Regular",

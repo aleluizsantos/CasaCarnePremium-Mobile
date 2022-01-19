@@ -309,7 +309,7 @@ const ModalAddProduct = ({ itemProduct, open, toogle }) => {
                       key={idx}
                       title={titleTypeAddit}
                       additional={additional}
-                      open={idx === 0 ? true : false}
+                      open={true}
                       onValues={listAdditional}
                       onChange={(item) => handleSelectAdditional(item)}
                     />

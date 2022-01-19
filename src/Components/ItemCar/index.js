@@ -12,7 +12,7 @@ const { width } = Dimensions.get("screen");
 //  Componete do Item do carrinho
 //-----------------------------------------------------------------------------
 const ItemCar = ({ itemCar }) => {
-  const { removeItemCar, changeAmountCart, isloading } = useContext(MyOrder);
+  const { removeItemCar, changeAmountCart } = useContext(MyOrder);
 
   // Remove o item do Carrinho de compra
   function handleRemoveItemCar(_item) {
@@ -52,7 +52,7 @@ const ItemCar = ({ itemCar }) => {
   async function calcTotalProduct(_itemCar, amount = 1) {
     const priceNormal = Number(_itemCar.price);
     const pricePromotion = Number(_itemCar.pricePromotion);
-
+    // Somar todos os adicionais escolhidos
     const sumAdditional = await _itemCar.listAdditional.reduce(
       (total, item) => {
         return total + Number(item.price);
@@ -61,6 +61,7 @@ const ItemCar = ({ itemCar }) => {
     );
 
     const totalAdditional = amount * sumAdditional;
+
     const totalProduct =
       amount * (_itemCar.promotion ? pricePromotion : priceNormal);
 
@@ -70,8 +71,8 @@ const ItemCar = ({ itemCar }) => {
   function listAdditional() {
     let stringAdditional = "";
     itemCar.listAdditional.forEach((element, idx) => {
-      stringAdditional += element.description;
-      if (itemCar.listAdditional.length > idx + 1) stringAdditional += " / ";
+      stringAdditional += " 🔸 " + element.description;
+      if (itemCar.listAdditional.length > idx + 1) stringAdditional + " /";
     });
 
     return stringAdditional;
@@ -117,6 +118,7 @@ const ItemCar = ({ itemCar }) => {
           )}
         </View>
       </View>
+
       <View style={styles.groupButton}>
         <TouchableOpacity onPress={() => handleRemoveItemCar(itemCar)}>
           <Feather name="trash-2" size={25} color={colors.regular} />

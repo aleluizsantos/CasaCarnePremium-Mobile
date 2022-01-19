@@ -34,7 +34,6 @@ const Menu = () => {
       (async () => {
         loadindProduct();
       })();
-
       return () => (amoted = false);
     }
   }, []);

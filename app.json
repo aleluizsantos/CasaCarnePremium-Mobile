@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Carne Premium",
-    "slug": "CarnePremium",
-    "version": "1.5.0",
+    "name": "Casa Premium",
+    "slug": "CasaPremium",
+    "version": "1.5.1",
     "description": "Aplicativo conectando você a melhor açougue da cidade.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lesoftware.casacarnepremium",
-      "buildNumber": "5"
+      "buildNumber": "6"
     },
     "notification": {
       "icon": "./assets/iconNotification.png",
@@ -32,7 +32,7 @@
       "package": "com.lesoftware.casacarnepremium",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "WRITE_SETTINGS",
         "READ_EXTERNAL_STORAGE",

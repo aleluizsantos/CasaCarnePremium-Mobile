@@ -140,9 +140,11 @@ const RegisterAddress = () => {
         };
         if (updateAdrressId !== null) {
           // Editar campo
-          await api.put(`/address/${updateAdrressId}`, dataAddress).then(() => {
-            editAddressDeleivery({ id: updateAdrressId, ...dataAddress });
-          });
+          await api
+            .put(`/address/${updateAdrressId}`, dataAddress)
+            .then(() =>
+              Alert.alert("Alteração endereço", "Seu endereço foi atualizado")
+            );
           setUpdateAddressId(null);
         } else {
           // Criar um novo endereço
